@@ -1,0 +1,250 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BFD6E02B-0B66-4895-BC2A-980664C7D21B}</ProjectGuid>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>SA.CodeView</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SA.CodeView</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>..\!bin\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Stub|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'TimeLimited|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <FileAlignment>4096</FileAlignment>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'TestDebug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\TestDebug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CodeViewer\CodeViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CodeViewer\CodeViewerBody.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CodeViewer\Document.cs" />
+    <Compile Include="CodeViewer\SmallTypes.cs" />
+    <Compile Include="CodeViewer\DocumentViewRenderer.cs" />
+    <Compile Include="IntelliSense\CompletionVariant.cs" />
+    <Compile Include="IntelliSense\EditQueryRegExBuilder.cs" />
+    <Compile Include="IntelliSense\WhereSuggestionBuilder.cs" />
+    <Compile Include="Languages\CSharpSyntaxSettings.cs" />
+    <Compile Include="Languages\Enums.cs" />
+    <Compile Include="CodeViewer\FindForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IntelliSense\DbInfoProvider\DbInfoProvider.cs" />
+    <Compile Include="IntelliSense\Visual\IntellisenseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IntelliSense\Visual\IntellisenseMessageFilter.cs" />
+    <Compile Include="IntelliSense\Visual\IntelliSenseListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="IntelliSense\CodeCompletor.cs" />
+    <Compile Include="IntelliSense\SuggestionBuilder.cs" />
+    <Compile Include="IntelliSense\Visual\WinApi.cs" />
+    <Compile Include="Languages\MsSqlSyntaxSettings.cs" />
+    <Compile Include="Languages\MySqlSyntaxSettings.cs" />
+    <Compile Include="Languages\NonSyntaxSettings.cs" />
+    <Compile Include="Languages\OracleSyntaxSettings.cs" />
+    <Compile Include="Languages\VisualBasicSyntaxSettings.cs" />
+    <Compile Include="Languages\XmlSyntaxSettings.cs" />
+    <Compile Include="Parsing\ISyntaxParser.cs" />
+    <Compile Include="CodeViewer\TextFinder.cs" />
+    <Compile Include="Editing\EditingController.cs" />
+    <Compile Include="Parsing\ParsingOnElements %28obsolete%29\BaseElement.cs" />
+    <Compile Include="Parsing\ParsingOnElements %28obsolete%29\BoundedElement.cs" />
+    <Compile Include="Parsing\ParsingOnElements %28obsolete%29\Enums.cs" />
+    <Compile Include="Parsing\ParsingOnElements %28obsolete%29\FixedListElement.cs" />
+    <Compile Include="Parsing\ParsingOnElements %28obsolete%29\Sequence.cs" />
+    <Compile Include="Parsing\ParsingOnElements %28obsolete%29\SingleElement.cs" />
+    <Compile Include="CodeViewer\TextStyle.cs" />
+    <Compile Include="Parsing\Token.cs" />
+    <Compile Include="Parsing\ParsingOnElements %28obsolete%29\SyntaxParser.cs" />
+    <Compile Include="Languages\SyntaxSettings.cs" />
+    <Compile Include="CodeViewer\TextCaret.cs" />
+    <Compile Include="CodeViewer\TextPoint.cs" />
+    <Compile Include="CodeViewer\TextSpan.cs" />
+    <Compile Include="Utils\TextSplitter.cs" />
+    <Compile Include="Utils\WordFinder.cs" />
+    <Compile Include="Parsing\Literal.cs" />
+    <Compile Include="Parsing\ParserSpecification.cs" />
+    <Compile Include="Parsing\BufferReader.cs" />
+    <Compile Include="Parsing\RuleDefParsing\Parser.cs" />
+    <Compile Include="Parsing\RuleDefParsing\Parser.HandMade.cs" />
+    <Compile Include="Parsing\RuleDefParsing\Scanner.cs" />
+    <Compile Include="Parsing\ScannerSpecification.cs" />
+    <Compile Include="Parsing\StateParser.cs" />
+    <Compile Include="Parsing\StateParserState.cs" />
+    <Compile Include="Parsing\StateScanner.cs" />
+    <Compile Include="Parsing\StateScannerState.cs" />
+    <Compile Include="Parsing\TokenDefParsing\Parser.cs" />
+    <Compile Include="Parsing\TokenDefParsing\Parser.HandMade.cs" />
+    <Compile Include="Parsing\TokenDefParsing\Scanner.cs" />
+    <EmbeddedResource Include="CodeViewer\CodeViewerBody.resx">
+      <DependentUpon>CodeViewerBody.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CodeViewer\FindForm.resx">
+      <DependentUpon>FindForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IntelliSense\Visual\IntellisenseForm.resx">
+      <DependentUpon>IntellisenseForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Coco\Parser.frame" />
+    <None Include="Coco\Scanner.frame" />
+    <None Include="Parsing\RuleDefParsing\coc.bat" />
+    <None Include="Parsing\RuleDefParsing\Grammar.atg" />
+    <None Include="Parsing\TokenDefParsing\coc.bat" />
+    <None Include="Parsing\TokenDefParsing\Grammar.atg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Coco\Coco.exe" />
+    <Content Include="IntelliSense\Visual\Icons\column.bmp" />
+    <Content Include="IntelliSense\Visual\Icons\db.bmp" />
+    <Content Include="IntelliSense\Visual\Icons\schema.bmp" />
+    <Content Include="IntelliSense\Visual\Icons\table.bmp" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

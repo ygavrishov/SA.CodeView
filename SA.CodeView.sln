@@ -1,0 +1,67 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SA.CodeView", "SA.CodeView\SA.CodeView.csproj", "{BFD6E02B-0B66-4895-BC2A-980664C7D21B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SA.CodeView.Tests", "SA.CodeView.Tests\SA.CodeView.Tests.csproj", "{8C265740-C969-4FAB-9518-7234317FCEF2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|Win32 = Debug|Win32
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|Win32 = Release|Win32
+		StartUnitTests|Any CPU = StartUnitTests|Any CPU
+		StartUnitTests|Mixed Platforms = StartUnitTests|Mixed Platforms
+		StartUnitTests|Win32 = StartUnitTests|Win32
+		TimeLimited|Any CPU = TimeLimited|Any CPU
+		TimeLimited|Mixed Platforms = TimeLimited|Mixed Platforms
+		TimeLimited|Win32 = TimeLimited|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.Release|Win32.ActiveCfg = Release|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.StartUnitTests|Any CPU.ActiveCfg = TestDebug|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.StartUnitTests|Any CPU.Build.0 = TestDebug|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.StartUnitTests|Mixed Platforms.ActiveCfg = TestDebug|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.StartUnitTests|Mixed Platforms.Build.0 = TestDebug|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.StartUnitTests|Win32.ActiveCfg = TestDebug|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.TimeLimited|Any CPU.ActiveCfg = TimeLimited|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.TimeLimited|Any CPU.Build.0 = TimeLimited|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.TimeLimited|Mixed Platforms.ActiveCfg = TimeLimited|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.TimeLimited|Mixed Platforms.Build.0 = TimeLimited|Any CPU
+		{BFD6E02B-0B66-4895-BC2A-980664C7D21B}.TimeLimited|Win32.ActiveCfg = TimeLimited|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.Release|Win32.ActiveCfg = Release|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.StartUnitTests|Any CPU.ActiveCfg = TestDebug|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.StartUnitTests|Any CPU.Build.0 = TestDebug|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.StartUnitTests|Mixed Platforms.ActiveCfg = TestDebug|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.StartUnitTests|Mixed Platforms.Build.0 = TestDebug|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.StartUnitTests|Win32.ActiveCfg = TestDebug|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.TimeLimited|Any CPU.ActiveCfg = TimeLimited|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.TimeLimited|Any CPU.Build.0 = TimeLimited|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.TimeLimited|Mixed Platforms.ActiveCfg = TimeLimited|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.TimeLimited|Mixed Platforms.Build.0 = TimeLimited|Any CPU
+		{8C265740-C969-4FAB-9518-7234317FCEF2}.TimeLimited|Win32.ActiveCfg = TimeLimited|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

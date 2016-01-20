@@ -1,0 +1,118 @@
+COMPILER TokenDeclarations
+IGNORECASE
+//=================================================================================================
+CHARACTERS
+  letter 				= 'a' .. 'z' + '_'.
+  digit					= '0'..'9'.
+//=================================================================================================
+TOKENS
+  ident 				= letter {letter | digit}.
+
+IGNORE '\r' + '\n' + '\t'
+//=================================================================================================
+PRODUCTIONS
+
+//=================================================================================================
+TokenDeclarations
+(.
+	List<StateParserState> oNewStates;
+	List<StateParserState> listStartStates = new List<StateParserState>{this.Spec.StartState};
+	List<StateParserState> listEndStates = new List<StateParserState>{this.Spec.EndState};
+.)
+=
+	Expression<out oNewStates, listStartStates, listEndStates>
+(.
+	if (oNewStates != null)
+		foreach (var oState in oNewStates)
+			oState.SetDefaultLink(this.Spec.EndState);
+.)
+.
+//=================================================================================================
+Expression <. out List<StateParserState> newStates, List<StateParserState> startStates, List<StateParserState> endStates .>
+=
+	Alternative<out newStates, startStates, endStates>
+	{
+		(.
+			List<StateParserState> newAltStates;
+		.)
+		'|' Alternative<out newAltStates, startStates, endStates>
+		(.
+			if (newStates == null || newStates.Count == 0)
+				newStates = newAltStates;
+			else if (newAltStates != null && newAltStates.Count > 0)
+				newStates.AddRange(newAltStates);
+		.)
+	}
+.
+//=================================================================================================
+Alternative <. out List<StateParserState> newStates, List<StateParserState> startStates, List<StateParserState> endStates .>
+=
+	Symbol<out newStates, startStates, endStates>
+	{
+		Symbol<out newStates, newStates, endStates>
+	}
+.
+//=================================================================================================
+Symbol <. out List<StateParserState> newStates, List<StateParserState> startStates, List<StateParserState> endStates .>
+(.
+	newStates = null;
+.)
+=
+	ident
+	(.
+		string sTokenType = t.val.ToLower();
+		if (string.IsNullOrEmpty(sTokenType))
+		{
+			this.SemErr(t.val);
+			return;
+		}
+
+		StateParserState newState = new StateParserState("<" + (this.Spec.States.Count - 2).ToString() + ">");
+		this.Spec.States.Add(newState);
+		foreach (var oStartState in startStates)
+		{
+			oStartState.AddLink(sTokenType, newState);
+			oStartState.SetDefaultLink(this.Spec.FailState);
+		}
+		newStates = new List<StateParserState>{newState};
+	.)
+	[
+		(.
+			int iStart = la.pos + 2 * la.val.Length;
+		.)
+		'?' ANY '?'
+		(.
+			string sValue = this.scanner.buffer.GetString(iStart, t.pos);
+			if (!string.IsNullOrEmpty(sValue))
+				newState.StyleName = sValue;
+		.)
+	]
+	|
+	'(' Expression<out newStates, startStates, endStates> ')'
+	|
+	'[' Expression<out newStates, startStates, endStates> ']'
+	(.
+		if (newStates != null)
+			newStates.AddRange(startStates);
+	.)
+	|
+	'{' Expression<out newStates, startStates, endStates> '}'
+	(.
+		if (newStates != null && startStates != null)
+		{
+			///startStates в данном случае - это элементы перед началом необязательная части, которая может повторяться многократно.
+			///Надо организовать цикл повторяющейся части, а для этого нам нужен переход на ее начало.
+			///Значит для всех конечных состояний (newStates) мы делаем переходы по таким же условиям, что и для startStates.
+			foreach (var oStartState in startStates)
+				foreach (var oEntry in oStartState.Entries)
+					foreach (var oNewState in newStates)
+						if (!oNewState.Entries.ContainsKey(oEntry.Key))
+							oNewState.AddLink(oEntry.Key, oEntry.Value);
+			///Поскольку мы имеем дело с необязательно конструкцией, которая может быть, а может и не быть,
+			///то входные состояния дальше мы будем обрабатывать так же как и выходные.
+			newStates.AddRange(startStates);
+		}
+	.)
+.
+//=================================================================================================
+END TokenDeclarations.

@@ -1,0 +1,122 @@
+COMPILER TokenDeclarations
+IGNORECASE
+//=================================================================================================
+CHARACTERS
+  letter 				= 'a' .. 'z' + '_'.
+  digit					= '0'..'9'.
+//=================================================================================================
+TOKENS
+  ident 				= letter {letter | digit}.
+
+IGNORE '\r' + '\n' + '\t'
+//=================================================================================================
+PRODUCTIONS
+
+//=================================================================================================
+TokenDeclarations
+(.
+	List<StateScannerState> oNewStates;
+	List<StateScannerState> listStartStates = new List<StateScannerState>{this.Spec.StartState};
+	List<StateScannerState> listEndStates = new List<StateScannerState>{this.Spec.EndState};
+.)
+=
+	Expression<out oNewStates, listStartStates, listEndStates>
+(.
+	if (oNewStates != null)
+		foreach (var oState in oNewStates)
+			oState.SetDefaultLink(this.Spec.EndState);
+.)
+.
+//=================================================================================================
+Expression <. out List<StateScannerState> newStates, List<StateScannerState> startStates, List<StateScannerState> endStates .>
+=
+	Alternative<out newStates, startStates, endStates>
+	{
+		(.
+			List<StateScannerState> newAltStates;
+		.)
+		'|' Alternative<out newAltStates, startStates, endStates>
+		(.
+			if (newStates == null || newStates.Count == 0)
+				newStates = newAltStates;
+			else if (newAltStates != null && newAltStates.Count > 0)
+				newStates.AddRange(newAltStates);
+		.)
+	}
+.
+//=================================================================================================
+Alternative <. out List<StateScannerState> newStates, List<StateScannerState> startStates, List<StateScannerState> endStates .>
+=
+	Symbol<out newStates, startStates, endStates>
+	{
+		Symbol<out newStates, newStates, endStates>
+	}
+.
+//=================================================================================================
+Symbol <. out List<StateScannerState> newStates, List<StateScannerState> startStates, List<StateScannerState> endStates .>
+(.
+	newStates = null;
+.)
+=
+	ident
+	(.
+		var oTokenSpec = this.Spec.GetLiteralByName(t.val);
+		if (oTokenSpec == null)
+		{
+			this.SemErr(t.val);
+			return;
+		}
+
+		///Ищем состояние, в которое мы должны перейти по указанному входному символу
+		StateScannerState oNextState = null;
+		foreach (var oStartState in startStates)
+		{
+			if (oStartState.Entries.TryGetValue(oTokenSpec, out oNextState))
+				break;
+		}
+		///Если нужного состояния не найдено, то создаем его.
+		if (oNextState == null)
+		{
+			string sStateName = "<" + (this.Spec.States.Count - 2).ToString() + ">";
+			oNextState = new StateScannerState(sStateName);
+			this.Spec.States.Add(oNextState);
+		}
+		///Накладываем связи между исходными состояниями и нашим.
+		foreach (var oStartState in startStates)
+			if (!oStartState.Entries.ContainsKey(oTokenSpec))
+			{
+				oStartState.AddLink(oTokenSpec, oNextState);
+				oStartState.SetDefaultLink(this.Spec.FailState);
+			}
+		///Возвращаем список из одного состояния.
+		newStates = new List<StateScannerState> { oNextState };
+	.)
+	|
+	'(' Expression<out newStates, startStates, endStates> ')'
+	|
+	'[' Expression<out newStates, startStates, endStates> ']'
+	(.
+		if (newStates != null)
+			newStates.AddRange(startStates);
+	.)
+	|
+	'{' Expression<out newStates, startStates, endStates> '}'
+	(.
+		if (newStates != null && startStates != null)
+		{
+			///startStates в данном случае - это элементы перед началом необязательная части, которая может повторяться многократно.
+			///Надо организовать цикл повторяющейся части, а для этого нам нужен переход на ее начало.
+			///Значит для всех конечных состояний (newStates) мы делаем переходы по таким же условиям, что и для startStates.
+			foreach (var oStartState in startStates)
+				foreach (var oEntry in oStartState.Entries)
+					foreach (var oNewState in newStates)
+						if (!oNewState.Entries.ContainsKey(oEntry.Key))
+							oNewState.AddLink(oEntry.Key, oEntry.Value);
+			///Поскольку мы имеем дело с необязательно конструкцией, которая может быть, а может и не быть,
+			///то входные состояния дальше мы будем обрабатывать так же как и выходные.
+			newStates.AddRange(startStates);
+		}
+	.)
+.
+//=================================================================================================
+END TokenDeclarations.

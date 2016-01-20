@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SearchFilter xmlns="http://schemas.microsoft.com/VisualStudio/2004/08/Help/SearchFilter" Version="0.1.0.0">
+
+   <FilterAttribute>
+
+		<!--<Id>Technology</Id>-->
+        <Name _locID="name.18">Technology</Name>
+		<Empty/>
+		<Empty2 attr=""/>
+
+	 <FilterValue>
+            <Id>TSQL</Id>
+            <Name _locID="name.13">SQL Server 2008 Transact-SQL</Name>
+            <Meaning>
+                <LocalFilterString>("ProductVers"="kbsqlserv105" AND "DevLang"="TSQL")</LocalFilterString>
+                <TocInclude></TocInclude>
+                <OnlineFilterString><![CDATA[<StringTest Name="ExtendedProperty" Operator="Equals" 
+                Value="bb803730" ExtendedProperty="MSCategory"/>]]>
+                </OnlineFilterString>
+            </Meaning>
+        </FilterValue>
+
+        <FilterValue>  
+            <Id>kbMDX</Id>
+            <Name _locID="name.15">SQL Server 2008 Multidimensional Expressions (MDX)</Name>
+            <Meaning>
+                <LocalFilterString>("ProductVers"="kbsqlserv105" AND "DevLang"="kbMDX")</LocalFilterString>
+                <TocInclude></TocInclude>
+                <OnlineFilterString><![CDATA[<StringTest Name="ExtendedProperty" Operator="Equals" 
+                Value="bb803731" ExtendedProperty="MSCategory"/>]]>
+                </OnlineFilterString>
+            </Meaning> 
+         </FilterValue>
+
+         <FilterValue>    
+            <Id>DMX</Id>
+            <Name _locID="name.16">SQL Server 2008 Data Mining Extensions (DMX)</Name>
+            <Meaning>
+                <LocalFilterString>("ProductVers"="kbsqlserv105" AND "DevLang"="DMX")</LocalFilterString>
+                <TocInclude></TocInclude>
+                <OnlineFilterString><![CDATA[<StringTest Name="ExtendedProperty" Operator="Equals" 
+                Value="bb803732" ExtendedProperty="MSCategory"/>]]>
+                </OnlineFilterString>
+            </Meaning> 
+         </FilterValue>
+
+        <FilterValue>
+            <Id>kbsqlserv105</Id>
+            <Name _locID="name.20">SQL Server 2008</Name>
+            <Meaning>
+                <LocalFilterString>("ProductVers"="kbsqlserv105")</LocalFilterString>
+                <TocInclude></TocInclude>
+                <OnlineFilterString><![CDATA[<StringTest Name="ExtendedProperty" Operator="Equals" 
+                Value="ms0xxxxx" ExtendedProperty="MSCategory"/>]]>
+                </OnlineFilterString>
+            </Meaning>
+        </FilterValue>
+
+        <FilterValue>
+            <Id>kbanalysisservices</Id>
+            <Name _locID="name.22">SQL Server 2008 Analysis Services</Name>
+            <Meaning>
+                <LocalFilterString>("ProductVers"="kbsqlserv105" AND "Technology"="kbanalysisservices")</LocalFilterString>
+                <TocInclude></TocInclude>
+                <OnlineFilterString><![CDATA[<StringTest Name="ExtendedProperty" Operator="Equals" 
+                Value="bb803733" ExtendedProperty="MSCategory"/>]]>
+                </OnlineFilterString>
+            </Meaning>
+        </FilterValue>
+
+        <FilterValue>
+            <Id>kbdatamine</Id>
+            <Name _locID="name.23">SQL Server 2008 Data Mining</Name>
+            <Meaning>
+                <LocalFilterString>("ProductVers"="kbsqlserv105" AND "Technology"="kbdatamine")</LocalFilterString>
+                <TocInclude></TocInclude>
+                <OnlineFilterString><![CDATA[<StringTest Name="ExtendedProperty" Operator="Equals" 
+                Value="bb803734" ExtendedProperty="MSCategory"/>]]>
+                </OnlineFilterString>
+            </Meaning>
+        </FilterValue>
+
+        <FilterValue>
+            <Id>kbdbengine</Id>
+            <Name _locID="name.24">SQL Server 2008 Database Engine</Name>
+            <Meaning>
+                <LocalFilterString>("ProductVers"="kbsqlserv105" AND "Technology"="kbdbengine")</LocalFilterString>
+                <TocInclude></TocInclude>
+                <OnlineFilterString><![CDATA[<StringTest Name="ExtendedProperty" Operator="Equals" 
+                Value="bb803735" ExtendedProperty="MSCategory"/>]]>
+                </OnlineFilterString>
+            </Meaning>
+        </FilterValue>
+
+        <FilterValue>
+            <Id>kbdbengine</Id>
+            <Name _locID="name.40">SQL Server 2008 Express</Name>
+            <Meaning>
+                <LocalFilterString>("ProductVers"="sql10express")</LocalFilterString>
+                <TocInclude></TocInclude>
+                <OnlineFilterString><![CDATA[<StringTest Name="ExtendedProperty" Operator="Equals" 
+                Value="bb803736" ExtendedProperty="MSCategory"/>]]>
+                </OnlineFilterString>
+            </Meaning>
+        </FilterValue>
+
+
+        <FilterValue>
+           <Id>kbDTS</Id>
+           <Name _locID="name.25">SQL Server 2008 Integration Services</Name>
+           <Meaning>
+                <LocalFilterString>("ProductVers"="kbsqlserv105" AND "Technology"="kbDTS")</LocalFilterString>
+                <TocInclude></TocInclude>
+                <OnlineFilterString><![CDATA[<StringTest Name="ExtendedProperty" Operator="Equals" 
+                Value="bb803737" ExtendedProperty="MSCategory"/>]]>
+                </OnlineFilterString>
+            </Meaning>
+        </FilterValue>                
+
+        <FilterValue>
+            <Id>kbreplication</Id>
+            <Name _locID="name.28">SQL Server 2008 Replication</Name>
+            <Meaning>
+                <LocalFilterString>("ProductVers"="kbsqlserv105" AND "Technology"="kbreplication")</LocalFilterString>
+                <TocInclude></TocInclude>
+                <OnlineFilterString><![CDATA[<StringTest Name="ExtendedProperty" Operator="Equals" 
+                Value="bb803738" ExtendedProperty="MSCategory"/>]]>
+                </OnlineFilterString>
+            </Meaning>
+        </FilterValue>
+
+        <FilterValue>
+            <Id>kbrepserv</Id>
+            <Name _locID="name.29">SQL Server 2008 Reporting Services</Name>
+            <Meaning>
+                <LocalFilterString>("ProductVers"="kbsqlserv105" AND "Technology"="kbrepserv")</LocalFilterString>
+                <TocInclude></TocInclude>
+                <OnlineFilterString><![CDATA[<StringTest Name="ExtendedProperty" Operator="Equals" 
+                Value="bb803739" ExtendedProperty="MSCategory"/>]]>
+                </OnlineFilterString>
+            </Meaning>
+        </FilterValue>
+
+        <FilterValue>
+            <Id>kbMDS</Id>
+            <Name _locID="name.50">SQL Server Master Data Services</Name>
+            <Meaning>
+                <LocalFilterString>("ProductVers"="kbsqlserv105" AND "Technology"="kbMDS")</LocalFilterString>
+                <TocInclude></TocInclude>
+                <OnlineFilterString><![CDATA[<StringTest Name="ExtendedProperty" Operator="Equals" 
+                Value="bb803750" ExtendedProperty="MSCategory"/>]]>
+                </OnlineFilterString>
+            </Meaning>
+        </FilterValue>
+
+        <FilterValue>
+            <Id>kbDAX</Id>
+            <Name _locID="name.51">SQL Server PowerPivot Data Analysis Expressions (DAX)</Name>
+            <Meaning>
+                <LocalFilterString>("ProductVers"="kbsqlserv105" AND "Technology"="kbDAX")</LocalFilterString>
+                <TocInclude></TocInclude>
+                <OnlineFilterString><![CDATA[<StringTest Name="ExtendedProperty" Operator="Equals" 
+                Value="bb803751" ExtendedProperty="MSCategory"/>]]>
+                </OnlineFilterString>
+            </Meaning>
+        </FilterValue>
+
+        <FilterValue>
+            <Id>kbPowerPivot</Id>
+            <Name _locID="name.52">SQL Server PowerPivot for SharePoint</Name>
+            <Meaning>
+                <LocalFilterString>("ProductVers"="kbsqlserv105" AND "Technology"="kbPowerPivot")</LocalFilterString>
+                <TocInclude></TocInclude>
+                <OnlineFilterString><![CDATA[<StringTest Name="ExtendedProperty" Operator="Equals" 
+                Value="bb803752" ExtendedProperty="MSCategory"/>]]>
+                </OnlineFilterString>
+            </Meaning>
+        </FilterValue>
+
+    </FilterAttribute>
+</SearchFilter>
