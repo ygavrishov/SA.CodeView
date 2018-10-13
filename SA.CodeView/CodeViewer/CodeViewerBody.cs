@@ -1,10 +1,9 @@
 /*****************************
- * TODO: Копирование в буфер текста в rtf
+ * TODO: copy to clipboard as rtf
  *****************************/
 using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using SA.CodeView.Utils;
 
@@ -239,6 +238,8 @@ namespace SA.CodeView
 		{
 			this.ChangeVisibleTokenList();
 
+			if (this.Renderer == null)
+				return;
 			this.Renderer.RenderView(e.Graphics);
 
 			if (this.Caret.Blink)
@@ -669,6 +670,8 @@ namespace SA.CodeView
 		//=========================================================================================
 		bool ChangeVisibleRowCount()
 		{
+			if (this.Viewer == null)
+				return false;
 			int iWidth = this.ClientRectangle.Width - this.Viewer.MarginWidth;
 			if (this._VerticalScroll.Visible)
 				iWidth -= this._VerticalScroll.Width;
@@ -695,7 +698,7 @@ namespace SA.CodeView
 		//=========================================================================================
 		void ChangeVisibleTokenList()
 		{
-			if (this.Viewer.Tokens == null)
+			if (this.Viewer == null || this.Viewer.Tokens == null)
 			{
 				this.FirstVisibleToken = 0;
 				this.LastVisibleToken = 0;

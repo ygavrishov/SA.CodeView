@@ -79,6 +79,7 @@ namespace SA.CodeView
 		}
 		//=========================================================================================
 		SyntaxSettings _SyntaxSettings;
+		[Browsable(false)]
 		public SyntaxSettings SyntaxSettings
 		{
 			get
@@ -101,6 +102,7 @@ namespace SA.CodeView
 		PredefinedLanguage _Language;
 		/// <summary>Programming language for which syntax highlighting will be used.</summary>
 		[DefaultValue(PredefinedLanguage.None)]
+		[Category("Syntax")]
 		public PredefinedLanguage Language
 		{
 			get { return this._Language; }
@@ -190,11 +192,13 @@ namespace SA.CodeView
 		}
 		//=========================================================================================
 		[DefaultValue(false)]
+		[Category("Behavior")]
 		public bool HighlightCurrentLine { get; set; }
 		//=========================================================================================
 		/// <summary>Specifies whether line numbers are shown on the left to the text view.</summary>
 		[DefaultValue(false)]
 		[Description("Specifies whether line numbers are shown on the left to the text view.")]
+		[Category("Appearance")]
 		public bool ShowLineNumbers
 		{
 			get { return this._ShowLineNumbers; }
@@ -211,6 +215,7 @@ namespace SA.CodeView
 		/// <summary>Specifies whether margin area are shown on the left to the text view.</summary>
 		[DefaultValue(false)]
 		[Description("Specifies whether line numbers are shown on the left to the text view.")]
+		[Category("Appearance")]
 		public bool ShowMargin
 		{
 			get { return _ShowMargin; }
@@ -389,9 +394,8 @@ namespace SA.CodeView
 			this.Body.ScrollIntoView();
 		}
 		//=========================================================================================
-		#region Работа с выделением (selection)
+		#region Selection processing
 		//=========================================================================================
-		/// <summary>Выделить весь текст.</summary>
 		public void SelectAll()
 		{
 			this.Caret.MoveDocHome(true);
