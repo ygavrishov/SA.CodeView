@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
+using Moq;
 using NUnit.Framework;
-using Rhino.Mocks;
 using SA.CodeView;
 using SA.CodeView.Editing;
 
@@ -12,7 +12,7 @@ namespace Tests.CodeViewing
 	{
 		CodeViewer Viewer;
 		EditingController EditController;
-		ClipboardProxyClass ClipboardProxy;
+		Mock<ClipboardProxyClass> ClipboardProxy;
 		//=========================================================================================
 		#region Service functions
 		[SetUp]
@@ -21,6 +21,8 @@ namespace Tests.CodeViewing
 			this.Viewer = new CodeViewer();
 			this.Viewer.Language = PredefinedLanguage.MsSql;
 			this.EditController = new EditingController(Viewer);
+			this.ClipboardProxy = new Mock<ClipboardProxyClass>();
+			this.EditController.ClipboardProxy = this.ClipboardProxy.Object;
 		}
 		//=========================================================================================
 		/// <summary>Process key press.</summary>
@@ -59,17 +61,15 @@ namespace Tests.CodeViewing
 		/// <summary>Mock text in clipboard.</summary>
 		void SetTextToClipboard(string text)
 		{
-			ClipboardProxy = MockRepository.GenerateStub<ClipboardProxyClass>();
-			ClipboardProxy.Stub(x => x.ContainsText()).Return(true);
-			ClipboardProxy.Stub(x => x.GetText()).Return(text);
-			this.EditController.ClipboardProxy = this.ClipboardProxy;
+			ClipboardProxy = new Mock<ClipboardProxyClass>();
+			ClipboardProxy.Setup(x => x.ContainsText()).Returns(true);
+			ClipboardProxy.Setup(x => x.GetText()).Returns(text);
+			this.EditController.ClipboardProxy = this.ClipboardProxy.Object;
 		}
 		//=========================================================================================
 		void ExpectTextInClipboard(string text)
 		{
-			ClipboardProxy = MockRepository.GenerateMock<ClipboardProxyClass>();
-			ClipboardProxy.Expect(x => x.SetText(text));
-			this.EditController.ClipboardProxy = this.ClipboardProxy;
+			ClipboardProxy.Verify(mock => mock.SetText(text), Times.AtLeastOnce());
 		}
 		#endregion
 		//=========================================================================================
@@ -304,12 +304,16 @@ from
 			this.Viewer.Caret.MoveToPos(0, 1, true);
 			this.Viewer.Caret.MoveDocEnd(false);
 
-			this.ExpectTextInClipboard("elect 12;");
 			this.ProcessKey(Keys.Control | Keys.X);
 			Assert.AreEqual(this.Viewer.Text, "s");
 			this.AssertCaret(0, 1);
-			this.ClipboardProxy.VerifyAllExpectations();
+			this.ExpectTextInClipboard("elect 12;");
 
+		}
+		//=========================================================================================
+		[Test]
+		public void Cut_multiline_text()
+		{
 			//Cut multiple lines
 			this.Viewer.Text = @"select *
 from sys.objects
@@ -317,17 +321,16 @@ where name = 'x'";
 			this.Viewer.Caret.MoveToPos(0, 4, true);
 			this.Viewer.Caret.MoveToPos(2, 3, false);
 
-			this.ExpectTextInClipboard(@"ct *
-from sys.objects
-whe");
 			this.ProcessKey(Keys.Control | Keys.X);
 			Assert.AreEqual(this.Viewer.Text, "selere name = 'x'");
 			this.AssertCaret(0, 4);
-			this.ClipboardProxy.VerifyAllExpectations();
+			this.ExpectTextInClipboard(@"ct *
+from sys.objects
+whe");
 		}
 		//=========================================================================================
 		[Test]
-		public void Copy_from_clipboard()
+		public void Copy_text_to_clipboard()
 		{
 			string sText = @"select *
 from sys.objects
@@ -336,33 +339,49 @@ where name = 'x'";
 			this.Viewer.Caret.MoveToPos(0, 1, true);
 			this.Viewer.Caret.MoveToPos(0, 8, false);
 
-			this.ExpectTextInClipboard("elect *");
 			this.ProcessKey(Keys.Control | Keys.C);
+
 			Assert.AreEqual(this.Viewer.Text, sText);
 			this.AssertSelection(0, 8, 0, 1);
-			this.ClipboardProxy.VerifyAllExpectations();
+			this.ExpectTextInClipboard("elect *");
+		}
+		//=========================================================================================
+		[Test]
+		public void Copy_multiple_lines()
+		{
+			string sText = @"select *
+from sys.objects
+where name = 'x'";
+			this.Viewer.Text = sText;
 
-			//Copy some lines
 			this.Viewer.Caret.MoveToPos(2, 3, true);
 			this.Viewer.Caret.MoveToPos(0, 4, false);
 
+			this.ProcessKey(Keys.Control | Keys.C);
+
+			Assert.AreEqual(this.Viewer.Text, sText);
+			this.AssertSelection(0, 4, 2, 3);
 			this.ExpectTextInClipboard(@"ct *
 from sys.objects
 whe");
-			this.ProcessKey(Keys.Control | Keys.C);
-			Assert.AreEqual(this.Viewer.Text, sText);
-			this.AssertSelection(0, 4, 2, 3);
-			this.ClipboardProxy.VerifyAllExpectations();
-
+		}
+		//=========================================================================================
+		[Test]
+		public void Copy_with_caret_return()
+		{
 			//Last selected symbol is caret return.
+			string sText = @"select *
+from sys.objects
+where name = 'x'";
+			this.Viewer.Text = sText;
+
 			this.Viewer.Caret.MoveToPos(0, 1, true);
 			this.Viewer.Caret.MoveToPos(1, 0, false);
 
-			this.ExpectTextInClipboard("elect *\r\n");
 			this.ProcessKey(Keys.Control | Keys.C);
 			Assert.AreEqual(this.Viewer.Text, sText);
 			this.AssertSelection(1, 0, 0, 1);
-			this.ClipboardProxy.VerifyAllExpectations();
+			this.ExpectTextInClipboard("elect *\r\n");
 		}
 		//=========================================================================================
 	}

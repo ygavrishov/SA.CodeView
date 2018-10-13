@@ -24,6 +24,7 @@ namespace SA.CodeView
 		public Document()
 		{
 			this.Lines = new List<DocumentLine>();
+			this.Lines.Add(new DocumentLine(""));
 		}
 		//=========================================================================================
 		internal void SetText(string text)
