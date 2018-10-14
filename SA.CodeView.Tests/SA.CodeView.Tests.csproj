@@ -118,9 +118,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="CodeViewing\EditingTests.cs" />
+    <Compile Include="Editing\EditingTests.cs" />
     <Compile Include="CodeViewing\FontColorTests.cs" />
     <Compile Include="CodeViewing\RendererTests.cs" />
+    <Compile Include="Editing\UndoRedoTests.cs" />
     <Compile Include="IntelliSense\AutoCompleteTests.cs" />
     <Compile Include="IntelliSense\BLL\TestDbInfoProvider.cs" />
     <Compile Include="IntelliSense\CodeViewerTokenIndexTests.cs" />

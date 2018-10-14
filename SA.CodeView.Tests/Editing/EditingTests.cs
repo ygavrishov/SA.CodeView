@@ -4,7 +4,7 @@ using NUnit.Framework;
 using SA.CodeView;
 using SA.CodeView.Editing;
 
-namespace Tests.CodeViewing
+namespace Tests.Editing
 {
 	/// <summary>Test editing features.</summary>
 	[TestFixture]
