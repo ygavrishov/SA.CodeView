@@ -86,7 +86,7 @@ namespace SA.CodeView.Editing
 						UndoRedoManager.Undo();
 					break;
 				case Keys.Delete:
-					this.ProcessDeleteKey();
+					this.ProcessDeleteKey(true);
 					break;
 				case Keys.Back:
 					this.ProcessBackspaceKey();
@@ -136,9 +136,10 @@ namespace SA.CodeView.Editing
 			this.DeleteSelection();
 		}
 		//=========================================================================================
-		internal void ProcessDeleteKey()
+		internal void ProcessDeleteKey(bool saveUndoOperation)
 		{
-			UndoRedoManager.ProcessDeletion(false);
+			if (saveUndoOperation)
+				UndoRedoManager.ProcessDeletion(false);
 
 			if (!this.HasSelection())
 			{

@@ -5,7 +5,11 @@ namespace SA.CodeView.Editing
 {
 	class UndoRedoManager
 	{
-		private UndoRedoOperation CurrentOperation;
+		private int CurrentLine;
+		private int CurrentStartChar;
+		private int CurrentEndChar;
+		private string PreviousText;
+
 		private readonly Stack<UndoRedoOperation> Operations;
 		private readonly CodeViewer Viewer;
 		private readonly EditingController EditingController;
@@ -25,33 +29,43 @@ namespace SA.CodeView.Editing
 
 		public void Undo()
 		{
-			switch (CurrentOperation.Type)
+			if (CurrentStartChar < CurrentEndChar)
+			{
+				var currentOperation = TakeCurrentTypingOperation();
+				UndoTyping(currentOperation);
+				StartNewUndoRedoOperation();
+				return;
+			}
+
+			if (Operations.Count == 0)
+				return;
+
+			var operation = Operations.Pop();
+			switch (operation.Type)
 			{
 				case UndoRedoOperationType.Insert:
-					Doc[CurrentOperation.Line].Text = Doc[CurrentOperation.Line].Text.Remove(CurrentOperation.StartChar, CurrentOperation.Length);
-					this.Viewer.Caret.MoveToPos(CurrentOperation.Line, CurrentOperation.StartChar, true);
-					if (!string.IsNullOrEmpty(CurrentOperation.PreviousText))
-						EditingController.PasteText(CurrentOperation.PreviousText);
+					UndoTyping(operation);
 					break;
 				case UndoRedoOperationType.CaretReturn:
-					if (Operations.Count > 0)
-					{
-						CurrentOperation = Operations.Pop();
-						Viewer.Caret.MoveToPos(CurrentOperation.Line, CurrentOperation.StartChar, true);
-						EditingController.ProcessDeleteKey();
-					}
+					Viewer.Caret.MoveToPos(operation.Line, operation.StartChar, true);
+					EditingController.ProcessDeleteKey(false);
 					break;
 				case UndoRedoOperationType.Remove:
-					Viewer.Caret.MoveToPos(CurrentOperation.Line, CurrentOperation.StartChar, true);
-					EditingController.PasteText(CurrentOperation.Text);
+					Viewer.Caret.MoveToPos(operation.Line, operation.StartChar, true);
+					EditingController.PasteText(operation.Text);
 					break;
 				default:
 					throw new NotSupportedException();
 			}
-			if (Operations.Count > 0)
-				CurrentOperation = Operations.Pop();
-			else
-				StartNewUndoRedoOperation();
+			StartNewUndoRedoOperation();
+		}
+
+		private void UndoTyping(UndoRedoOperation operation)
+		{
+			Doc[operation.Line].Text = Doc[operation.Line].Text.Remove(operation.StartChar, operation.Length);
+			this.Viewer.Caret.MoveToPos(operation.Line, operation.StartChar, true);
+			if (!string.IsNullOrEmpty(operation.PreviousText))
+				EditingController.PasteText(operation.PreviousText);
 		}
 
 		public void ProcessChar()
@@ -59,21 +73,42 @@ namespace SA.CodeView.Editing
 			string selectionText = Viewer.SelectionText;
 
 			if (selectionText.Length > 0 ||
-				CurrentOperation.Type != UndoRedoOperationType.Insert ||
-				Caret.Line != CurrentOperation.Line || Caret.Char != CurrentOperation.EndChar)
+				Caret.Line != CurrentLine || Caret.Char != CurrentEndChar)
 			{
-				SaveCurrentOperationToStack();
-				StartNewUndoRedoOperation();
-				CurrentOperation.PreviousText = selectionText;
+				var operation = SaveCurrentOperationToStack();
+				PreviousText = selectionText;
 			}
-			CurrentOperation.EndChar++;
+			CurrentEndChar++;
 		}
 
-		private void SaveCurrentOperationToStack()
+		private UndoRedoOperation SaveCurrentOperationToStack()
 		{
-			if (CurrentOperation.Type == UndoRedoOperationType.Insert)
-				CurrentOperation.Text = Doc[CurrentOperation.Line].Text.Substring(CurrentOperation.StartChar, CurrentOperation.Length);
-			Operations.Push(CurrentOperation);
+			UndoRedoOperation operation;
+			if (CurrentStartChar != CurrentEndChar)
+			{
+				operation = TakeCurrentTypingOperation();
+				Operations.Push(operation);
+			}
+			else
+				operation = null;
+			StartNewUndoRedoOperation();
+			return operation;
+		}
+
+		private UndoRedoOperation TakeCurrentTypingOperation()
+		{
+			UndoRedoOperation operation;
+			string text = Doc[CurrentLine].Text.Substring(CurrentStartChar, CurrentEndChar - CurrentStartChar);
+			operation = new UndoRedoOperation
+			{
+				Line = CurrentLine,
+				StartChar = CurrentStartChar,
+				EndChar = CurrentEndChar,
+				Text = text,
+				Type = UndoRedoOperationType.Insert,
+				PreviousText = PreviousText
+			};
+			return operation;
 		}
 
 		private void StartNewUndoRedoOperation()
@@ -82,32 +117,28 @@ namespace SA.CodeView.Editing
 			var caretPos = Caret.Point;
 			if (caretPos < startPoint)
 				startPoint = Caret.Point;
-			CurrentOperation = new UndoRedoOperation()
-			{
-				Type = UndoRedoOperationType.Insert,
-				StartChar = startPoint.Char,
-				Line = startPoint.Line,
-				EndChar = startPoint.Char,
-			};
+			CurrentLine = startPoint.Line;
+			CurrentEndChar = CurrentStartChar = startPoint.Char;
+			PreviousText = null;
 		}
 
 		public void ProcessEnterKey()
 		{
 			SaveCurrentOperationToStack();
-			CurrentOperation = new UndoRedoOperation
+			var operation = new UndoRedoOperation
 			{
 				Type = UndoRedoOperationType.CaretReturn,
 				Line = Viewer.Caret.Line,
 				StartChar = Viewer.Caret.Char,
 				EndChar = Viewer.Caret.Char,
 			};
-			SaveCurrentOperationToStack();
+			Operations.Push(operation);
 		}
 
 		public void ProcessDeletion(bool backward)
 		{
 			SaveCurrentOperationToStack();
-			CurrentOperation = new UndoRedoOperation
+			var operation = new UndoRedoOperation
 			{
 				Type = UndoRedoOperationType.Remove,
 				Line = Viewer.Caret.Line,
@@ -117,17 +148,18 @@ namespace SA.CodeView.Editing
 			if (!Viewer.SelectionExists)
 			{
 				if (backward)
-					CurrentOperation.Text = Viewer.Caret.Char > 0 ? Doc[Viewer.Caret.Line].Text[Viewer.Caret.Char - 1].ToString() : "\r\n";
+					operation.Text = Viewer.Caret.Char > 0 ? Doc[Viewer.Caret.Line].Text[Viewer.Caret.Char - 1].ToString() : "\r\n";
 				else
 				{
 					if (Viewer.Caret.Char < Doc[Viewer.Caret.Line].Text.Length)
-						CurrentOperation.Text = Doc[Viewer.Caret.Line].Text[Viewer.Caret.Char].ToString();
+						operation.Text = Doc[Viewer.Caret.Line].Text[Viewer.Caret.Char].ToString();
 					else
-						CurrentOperation.Text = "\r\n";
+						operation.Text = "\r\n";
 				}
 			}
 			else
-				CurrentOperation.Text = Viewer.SelectionText;
+				operation.Text = Viewer.SelectionText;
+			Operations.Push(operation);
 		}
 	}
 }

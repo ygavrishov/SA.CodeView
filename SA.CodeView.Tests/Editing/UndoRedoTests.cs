@@ -149,11 +149,11 @@ abc");
 			ProcessKey(Keys.Control | Keys.Z);
 			Assert.AreEqual(Viewer.Text, "123");
 
-			//for (char letter = 'A'; letter <= 'C'; letter++)
-			//	ProcessChar(letter);
+			for (char letter = 'A'; letter <= 'C'; letter++)
+				ProcessChar(letter);
 
-			//ProcessKey(Keys.Control | Keys.Z);
-			//Assert.AreEqual(Viewer.Text, "123");
+			ProcessKey(Keys.Control | Keys.Z);
+			Assert.AreEqual(Viewer.Text, "123");
 		}
 	}
 }
