@@ -11,6 +11,8 @@ namespace SA.CodeView.Editing
 		private string PreviousText;
 
 		private readonly Stack<UndoRedoOperation> Operations;
+		private readonly Stack<UndoRedoOperation> UndoneOperations;
+
 		private readonly CodeViewer Viewer;
 		private readonly EditingController EditingController;
 		private readonly TextCaret Caret;
@@ -23,6 +25,7 @@ namespace SA.CodeView.Editing
 			Caret = Viewer.Caret;
 			Doc = Viewer.Document;
 			Operations = new Stack<UndoRedoOperation>();
+			UndoneOperations = new Stack<UndoRedoOperation>();
 
 			StartNewUndoRedoOperation();
 		}
@@ -33,6 +36,7 @@ namespace SA.CodeView.Editing
 			{
 				var currentOperation = TakeCurrentTypingOperation();
 				UndoTyping(currentOperation);
+				UndoneOperations.Push(currentOperation);
 				StartNewUndoRedoOperation();
 				return;
 			}
@@ -61,7 +65,32 @@ namespace SA.CodeView.Editing
 				default:
 					throw new NotSupportedException();
 			}
+			UndoneOperations.Push(operation);
 			StartNewUndoRedoOperation();
+		}
+
+		public void Redo()
+		{
+			SaveCurrentOperationToStack(false);
+
+			if (UndoneOperations.Count == 0)
+				return;
+
+			var operation = UndoneOperations.Pop();
+			switch (operation.Type)
+			{
+				case UndoRedoOperationType.Insert:
+				case UndoRedoOperationType.CaretReturn:
+					Viewer.Caret.MoveToPos(operation.Line, operation.StartChar, true);
+					EditingController.PasteText(operation.Text);
+					StartNewUndoRedoOperation();
+					Operations.Push(operation);
+					break;
+				case UndoRedoOperationType.Remove:
+				case UndoRedoOperationType.Paste:
+				default:
+					throw new NotSupportedException();
+			}
 		}
 
 		private void UndoTyping(UndoRedoOperation operation)
@@ -85,7 +114,7 @@ namespace SA.CodeView.Editing
 			CurrentEndChar++;
 		}
 
-		private UndoRedoOperation SaveCurrentOperationToStack()
+		private UndoRedoOperation SaveCurrentOperationToStack(bool cleanUndoneOperations = true)
 		{
 			UndoRedoOperation operation;
 			if (CurrentStartChar != CurrentEndChar)
@@ -95,6 +124,10 @@ namespace SA.CodeView.Editing
 			}
 			else
 				operation = null;
+
+			if (cleanUndoneOperations)
+				UndoneOperations.Clear();
+
 			StartNewUndoRedoOperation();
 			return operation;
 		}
@@ -159,6 +192,7 @@ namespace SA.CodeView.Editing
 				Line = Viewer.Caret.Line,
 				StartChar = Viewer.Caret.Char,
 				EndChar = Viewer.Caret.Char,
+				Text = "\r\n"
 			};
 			Operations.Push(operation);
 		}

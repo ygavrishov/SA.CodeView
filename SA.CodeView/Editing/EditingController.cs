@@ -92,6 +92,10 @@ namespace SA.CodeView.Editing
 					if (e.Control)
 						UndoRedoManager.Undo();
 					break;
+				case Keys.Y:
+					if (e.Control)
+						UndoRedoManager.Redo();
+					break;
 				case Keys.Delete:
 					this.ProcessDeleteKey(true);
 					break;

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
-using Moq;
+﻿using System.Windows.Forms;
 using NUnit.Framework;
 using SA.CodeView;
 using SA.CodeView.Editing;
@@ -188,7 +186,6 @@ abc");
 			Assert.AreEqual(Viewer.Text, "0123456789");
 		}
 
-
 		[Test]
 		public void Undo_paste_operation()
 		{
@@ -221,6 +218,44 @@ abc");
 
 			ProcessKey(Keys.Control | Keys.Z);
 			Assert.AreEqual(Viewer.Text, "");
+		}
+
+		[Test]
+		public void Redo_text_input()
+		{
+			Viewer.Text = "";
+			for (char letter = '0'; letter <= '9'; letter++)
+				ProcessChar(letter);
+
+			ProcessKey(Keys.Control | Keys.Z);
+			Assert.AreEqual(Viewer.Text, "");
+
+			ProcessKey(Keys.Control | Keys.Y);
+			Assert.AreEqual(Viewer.Text, "0123456789");
+		}
+
+		[Test]
+		public void Redo_caret_return()
+		{
+			Viewer.Text = "";
+			for (char letter = '0'; letter <= '9'; letter++)
+				ProcessChar(letter);
+			ProcessKey(Keys.Enter);
+			for (char letter = 'a'; letter <= 'c'; letter++)
+				ProcessChar(letter);
+			Assert.AreEqual(Viewer.Text, @"0123456789
+abc");
+			ProcessKey(Keys.Control | Keys.Z);
+			ProcessKey(Keys.Control | Keys.Z);
+			Assert.AreEqual(Viewer.Text, "0123456789");
+
+			ProcessKey(Keys.Control | Keys.Y);
+			Assert.AreEqual(Viewer.Text, @"0123456789
+");
+
+			ProcessKey(Keys.Control | Keys.Y);
+			Assert.AreEqual(Viewer.Text, @"0123456789
+abc");
 		}
 	}
 }
