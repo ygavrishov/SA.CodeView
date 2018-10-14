@@ -116,7 +116,6 @@ abc");
 			Assert.AreEqual(Viewer.Text, "0123456789");
 		}
 
-
 		[Test]
 		public void Undo_delete_button_processing()
 		{
@@ -134,6 +133,27 @@ abc");
 
 			ProcessKey(Keys.Control | Keys.Z);
 			Assert.AreEqual(Viewer.Text, "0123456789");
+		}
+
+		[Test]
+		public void Undo_text_replacement()
+		{
+			Viewer.Text = "";
+			for (char letter = '1'; letter <= '3'; letter++)
+				ProcessChar(letter);
+			Viewer.SelectAll();
+			for (char letter = 'a'; letter <= 'c'; letter++)
+				ProcessChar(letter);
+			Assert.AreEqual(Viewer.Text, @"abc");
+
+			ProcessKey(Keys.Control | Keys.Z);
+			Assert.AreEqual(Viewer.Text, "123");
+
+			//for (char letter = 'A'; letter <= 'C'; letter++)
+			//	ProcessChar(letter);
+
+			//ProcessKey(Keys.Control | Keys.Z);
+			//Assert.AreEqual(Viewer.Text, "123");
 		}
 	}
 }

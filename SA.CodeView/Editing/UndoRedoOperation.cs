@@ -14,6 +14,7 @@
 		public int Line;
 		public int EndChar;
 		public string Text;
+		public string PreviousText;
 
 		public int Length => EndChar - StartChar;
 

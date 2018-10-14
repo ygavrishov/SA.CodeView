@@ -52,11 +52,11 @@ namespace SA.CodeView.Editing
 				if (category == System.Globalization.UnicodeCategory.Control)
 					return false;
 			}
+			UndoRedoManager.ProcessChar();
+
 			this.InitFields();
 			this.DeleteSelection();
 			this.InitFields();
-
-			UndoRedoManager.ProcessChar();
 
 			this.Doc[CurPos.Line].Text = this.CurLine.Insert(CurPos.Char, c.ToString());
 			this.Viewer.Caret.MoveRight(true);
