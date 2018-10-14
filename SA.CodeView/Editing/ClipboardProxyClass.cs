@@ -2,22 +2,29 @@
 
 namespace SA.CodeView.Editing
 {
+	public interface IClipboard
+	{
+		bool ContainsText();
+		string GetText();
+		void SetText(string text);
+	}
+
 	/// <summary>Allow access to clipboard.</summary>
-	public class ClipboardProxyClass
+	class ClipboardProxyClass : IClipboard
 	{
 		public static readonly ClipboardProxyClass Self = new ClipboardProxyClass();
 		//=========================================================================================
-		public virtual bool ContainsText()
+		public bool ContainsText()
 		{
 			return Clipboard.ContainsText();
 		}
 		//=========================================================================================
-		public virtual string GetText()
+		public string GetText()
 		{
 			return Clipboard.GetText();
 		}
 		//=========================================================================================
-		public virtual void SetText(string text)
+		public void SetText(string text)
 		{
 			Clipboard.SetText(text);
 		}

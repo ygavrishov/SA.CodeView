@@ -5,6 +5,7 @@
 		Insert,
 		Remove,
 		CaretReturn,
+		Paste
 	}
 
 	internal class UndoRedoOperation

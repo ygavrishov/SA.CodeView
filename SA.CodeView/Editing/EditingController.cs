@@ -15,7 +15,7 @@ namespace SA.CodeView.Editing
 
 		/// <summary>Last keyboard event args</summary>
 		private KeyEventArgs KeyDownEventArgs;
-		internal ClipboardProxyClass ClipboardProxy;
+		internal IClipboard ClipboardProxy;
 
 		readonly CodeViewer Viewer;
 		readonly Document Doc;
@@ -73,13 +73,20 @@ namespace SA.CodeView.Editing
 			{
 				case Keys.V:
 					if (e.Control)
-						return this.PasteFromClipboard();
+						return PasteFromClipboard();
 					break;
 				case Keys.C:
+					if (e.Control)
+						if (!this.CopyToClipboard(false))
+							return false;
+					break;
 				case Keys.X:
 					if (e.Control)
-						if (!this.CopyToClipboard(e.KeyCode == Keys.X))
+					{
+						UndoRedoManager.ProcessCut();
+						if (!this.CopyToClipboard(true))
 							return false;
+					}
 					break;
 				case Keys.Z:
 					if (e.Control)
@@ -204,24 +211,29 @@ namespace SA.CodeView.Editing
 			this.Viewer.Caret.MoveToPos(pStart.Line, pStart.Col, true);
 		}
 
-		private void DeleteText(TextPoint startPos, TextPoint endPos)
+		internal void DeleteText(TextPoint startPos, TextPoint endPos)
 		{
-			if (startPos.Line == endPos.Line)
+			DeleteText(startPos.Line, startPos.Char, endPos.Line, endPos.Char);
+		}
+
+		internal void DeleteText(int startLine, int startChar, int endLine, int endChar)
+		{
+			if (startLine == endLine)
 			{
-				string sLine = this.Doc[startPos.Line].Text;
-				this.Doc[startPos.Line].Text = sLine.Remove(startPos.Char, endPos.Char - startPos.Char);
+				string sLine = this.Doc[startLine].Text;
+				this.Doc[startLine].Text = sLine.Remove(startChar, endChar - startChar);
 			}
 			else
 			{
 				//Find last line ending
-				string sEndLine = this.Doc[endPos.Line].Text.Substring(endPos.Char);
+				string sEndLine = this.Doc[endLine].Text.Substring(endChar);
 				//Delete unnecessary lines
-				this.Doc.RemoveRange(startPos.Line + 1, endPos.Line - startPos.Line);
+				this.Doc.RemoveRange(startLine + 1, endLine - startLine);
 				//Create result text
-				string sStartLine = this.Doc[startPos.Line].Text;
-				if (startPos.Char < sStartLine.Length)
-					sStartLine = sStartLine.Remove(startPos.Char);
-				this.Doc[startPos.Line].Text = sStartLine + sEndLine;
+				string sStartLine = this.Doc[startLine].Text;
+				if (startChar < sStartLine.Length)
+					sStartLine = sStartLine.Remove(startChar);
+				this.Doc[startLine].Text = sStartLine + sEndLine;
 			}
 		}
 
@@ -238,7 +250,14 @@ namespace SA.CodeView.Editing
 			if (!this.ClipboardProxy.ContainsText())
 				return false;
 
-			this.PasteText(this.ClipboardProxy.GetText());
+			string text = ClipboardProxy.GetText();
+			int startLine = Viewer.Caret.Line;
+			int startChar = Viewer.Caret.Char;
+
+			PasteText(text);
+
+			UndoRedoManager.ProcessPaste(startLine, startChar, text);
+
 			this.InitTokens();
 			this.Viewer.Body.Invalidate(false);
 			return true;

@@ -12,7 +12,7 @@ namespace Tests.Editing
 	{
 		CodeViewer Viewer;
 		EditingController EditController;
-		Mock<ClipboardProxyClass> ClipboardProxy;
+		Mock<IClipboard> ClipboardProxy;
 		//=========================================================================================
 		#region Service functions
 		[SetUp]
@@ -21,7 +21,7 @@ namespace Tests.Editing
 			this.Viewer = new CodeViewer();
 			this.Viewer.Language = PredefinedLanguage.MsSql;
 			this.EditController = new EditingController(Viewer);
-			this.ClipboardProxy = new Mock<ClipboardProxyClass>();
+			this.ClipboardProxy = new Mock<IClipboard>();
 			this.EditController.ClipboardProxy = this.ClipboardProxy.Object;
 		}
 		//=========================================================================================
@@ -61,7 +61,7 @@ namespace Tests.Editing
 		/// <summary>Mock text in clipboard.</summary>
 		void SetTextToClipboard(string text)
 		{
-			ClipboardProxy = new Mock<ClipboardProxyClass>();
+			ClipboardProxy = new Mock<IClipboard>();
 			ClipboardProxy.Setup(x => x.ContainsText()).Returns(true);
 			ClipboardProxy.Setup(x => x.GetText()).Returns(text);
 			this.EditController.ClipboardProxy = this.ClipboardProxy.Object;

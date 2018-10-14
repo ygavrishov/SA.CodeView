@@ -1,10 +1,25 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
+using Moq;
 using NUnit.Framework;
 using SA.CodeView;
 using SA.CodeView.Editing;
 
 namespace Tests.Editing
 {
+	class FakeClipboard : IClipboard
+	{
+		private string _text;
+		public bool ContainsText() => !string.IsNullOrEmpty(_text);
+
+		public string GetText() => _text;
+
+		public void SetText(string text)
+		{
+			_text = text;
+		}
+	}
+
 	[TestFixture]
 	public class UndoRedoTests
 	{
@@ -17,6 +32,7 @@ namespace Tests.Editing
 			Viewer = new CodeViewer();
 			Viewer.Language = PredefinedLanguage.MsSql;
 			EditController = new EditingController(Viewer);
+			EditController.ClipboardProxy = new FakeClipboard();
 		}
 
 		/// <summary>Process key press.</summary>
@@ -154,6 +170,57 @@ abc");
 
 			ProcessKey(Keys.Control | Keys.Z);
 			Assert.AreEqual(Viewer.Text, "123");
+		}
+
+		[Test]
+		public void Undo_cut_operation()
+		{
+			Viewer.Text = "";
+			for (char letter = '0'; letter <= '9'; letter++)
+				ProcessChar(letter);
+			Viewer.Caret.MoveToPos(0, 7, true);
+			Viewer.Caret.MoveToPos(0, 4, false);
+
+			ProcessKey(Keys.Control | Keys.X);
+			Assert.AreEqual(Viewer.Text, "0123789");
+
+			ProcessKey(Keys.Control | Keys.Z);
+			Assert.AreEqual(Viewer.Text, "0123456789");
+		}
+
+
+		[Test]
+		public void Undo_paste_operation()
+		{
+			Viewer.Text = "";
+			for (char letter = 'a'; letter <= 'c'; letter++)
+				ProcessChar(letter);
+
+			Viewer.SelectAll();
+
+			ProcessKey(Keys.Control | Keys.X);
+			ProcessKey(Keys.Control | Keys.V);
+			ProcessKey(Keys.Control | Keys.V);
+			ProcessKey(Keys.Control | Keys.V);
+			Assert.AreEqual(Viewer.Text, "abcabcabc");
+
+			ProcessKey(Keys.Control | Keys.Z);
+			Assert.AreEqual(Viewer.Text, "abcabc");
+
+			ProcessKey(Keys.Control | Keys.Z);
+			Assert.AreEqual(Viewer.Text, "abc");
+
+			ProcessKey(Keys.Control | Keys.Z);
+			Assert.AreEqual(Viewer.Text, "");
+
+			ProcessKey(Keys.Control | Keys.Z);
+			Assert.AreEqual(Viewer.Text, "abc");
+
+			ProcessKey(Keys.Control | Keys.Z);
+			Assert.AreEqual(Viewer.Text, "");
+
+			ProcessKey(Keys.Control | Keys.Z);
+			Assert.AreEqual(Viewer.Text, "");
 		}
 	}
 }

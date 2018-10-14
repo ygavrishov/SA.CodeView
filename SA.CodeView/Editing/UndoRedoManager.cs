@@ -54,6 +54,10 @@ namespace SA.CodeView.Editing
 					Viewer.Caret.MoveToPos(operation.Line, operation.StartChar, true);
 					EditingController.PasteText(operation.Text);
 					break;
+				case UndoRedoOperationType.Paste:
+					Viewer.Caret.MoveToPos(operation.Line, operation.StartChar, true);
+					EditingController.DeleteText(operation.Line, operation.StartChar, operation.Line, operation.EndChar);
+					break;
 				default:
 					throw new NotSupportedException();
 			}
@@ -93,6 +97,30 @@ namespace SA.CodeView.Editing
 				operation = null;
 			StartNewUndoRedoOperation();
 			return operation;
+		}
+
+		public void ProcessPaste(int startLine, int startChar, string text)
+		{
+			var operation = new UndoRedoOperation
+			{
+				Type = UndoRedoOperationType.Paste,
+				Line = startLine,
+				StartChar = startChar,
+				Text = Viewer.Text,
+				EndChar = Caret.Char,
+				PreviousText = PreviousText,
+			};
+			Operations.Push(operation);
+			StartNewUndoRedoOperation();
+		}
+
+		public void ProcessCut()
+		{
+			SaveCurrentOperationToStack();
+			var operation = TakeCurrentTypingOperation();
+			operation.Type = UndoRedoOperationType.Remove;
+			operation.Text = Viewer.SelectionText;
+			Operations.Push(operation);
 		}
 
 		private UndoRedoOperation TakeCurrentTypingOperation()
