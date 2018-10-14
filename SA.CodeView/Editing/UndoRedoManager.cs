@@ -93,7 +93,7 @@ namespace SA.CodeView.Editing
 			SaveCurrentOperationToStack();
 		}
 
-		public void ProcessBackspaceKey()
+		public void ProcessDeletion(bool backward)
 		{
 			SaveCurrentOperationToStack();
 			CurrentOperation = new UndoRedoOperation
@@ -104,7 +104,17 @@ namespace SA.CodeView.Editing
 				EndChar = Viewer.Caret.Char,
 			};
 			if (!Viewer.SelectionExists)
-				CurrentOperation.Text = Viewer.Caret.Char > 0 ? Doc[Viewer.Caret.Line].Text[Viewer.Caret.Char - 1].ToString() : "\r\n";
+			{
+				if (backward)
+					CurrentOperation.Text = Viewer.Caret.Char > 0 ? Doc[Viewer.Caret.Line].Text[Viewer.Caret.Char - 1].ToString() : "\r\n";
+				else
+				{
+					if (Viewer.Caret.Char < Doc[Viewer.Caret.Line].Text.Length)
+						CurrentOperation.Text = Doc[Viewer.Caret.Line].Text[Viewer.Caret.Char].ToString();
+					else
+						CurrentOperation.Text = "\r\n";
+				}
+			}
 			else
 				CurrentOperation.Text = Viewer.SelectionText;
 		}

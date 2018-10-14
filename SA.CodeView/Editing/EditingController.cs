@@ -116,7 +116,7 @@ namespace SA.CodeView.Editing
 		//=========================================================================================
 		private void ProcessBackspaceKey()
 		{
-			UndoRedoManager.ProcessBackspaceKey();
+			UndoRedoManager.ProcessDeletion(true);
 
 			if (!this.HasSelection())
 			{
@@ -138,6 +138,8 @@ namespace SA.CodeView.Editing
 		//=========================================================================================
 		internal void ProcessDeleteKey()
 		{
+			UndoRedoManager.ProcessDeletion(false);
+
 			if (!this.HasSelection())
 			{
 				if (this.KeyDownEventArgs.Control)

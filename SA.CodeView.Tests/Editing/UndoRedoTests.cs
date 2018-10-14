@@ -81,7 +81,7 @@ abc");
 		}
 
 		[Test]
-		public void Undo_delete_operation()
+		public void Undo_backspace_button_processing()
 		{
 			Viewer.Text = "";
 			for (char letter = '0'; letter <= '9'; letter++)
@@ -111,6 +111,26 @@ abc");
 			Viewer.Caret.MoveToPos(0, 4, false);
 			ProcessKey(Keys.Back);
 			Assert.AreEqual(Viewer.Text, @"0123789");
+
+			ProcessKey(Keys.Control | Keys.Z);
+			Assert.AreEqual(Viewer.Text, "0123456789");
+		}
+
+
+		[Test]
+		public void Undo_delete_button_processing()
+		{
+			Viewer.Text = "";
+			for (char letter = '0'; letter <= '9'; letter++)
+				ProcessChar(letter);
+			Viewer.Caret.MoveToPos(0, 7, true);
+			Viewer.Caret.MoveToPos(0, 4, false);
+			for (int i = 0; i < 2; i++)
+				ProcessKey(Keys.Delete);
+			Assert.AreEqual(Viewer.Text, @"012389");
+
+			ProcessKey(Keys.Control | Keys.Z);
+			Assert.AreEqual(Viewer.Text, "0123789");
 
 			ProcessKey(Keys.Control | Keys.Z);
 			Assert.AreEqual(Viewer.Text, "0123456789");
