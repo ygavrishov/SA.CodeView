@@ -3,6 +3,14 @@ WinForms code editor with syntax highlighting
 
 SA.CodeView is light-weight viewer and editor with syntax highlighting. It can be used as single-line text field or as fully functioned editor. It was initially developed for some application but then was segregated as standalone open-source library.
 
+## Quick Start
+
+* Download the sources and compile SA.CodeView.dll library.
+* Create new Windows Forms project and open Form1.cs designer view.
+* Toolbox panel -> right click -> Choose Items... -> Browse. CodeViewer control should appear.
+* Drag and drop CodeViewer into the form.
+* Specify Language property, compile the project.
+
 ## Features
 * **Line Numbers**. Just Set ShowLineNumbers = true.
 * **"Find Text" window**. Invoke ShowFind() method from your code.
