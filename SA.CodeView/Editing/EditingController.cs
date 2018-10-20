@@ -118,6 +118,8 @@ namespace SA.CodeView.Editing
 		{
 			UndoRedoManager.ProcessEnterKey();
 
+			DeleteSelection();
+			InitFields();
 			int iCurPosChar = this.CurPos.Char;
 			if (iCurPosChar < this.CurLine.Length)
 				this.Doc[CurPos.Line].Text = this.CurLine.Remove(iCurPosChar);

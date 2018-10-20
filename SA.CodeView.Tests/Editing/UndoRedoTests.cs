@@ -257,5 +257,24 @@ abc");
 			Assert.AreEqual(Viewer.Text, @"0123456789
 abc");
 		}
+
+		[Test]
+		public void Redo_text_replacement()
+		{
+			Viewer.Text = "";
+			for (char letter = '1'; letter <= '3'; letter++)
+				ProcessChar(letter);
+			Viewer.Caret.MoveToPos(0, 1, true);
+			Viewer.Caret.MoveToPos(0, 2, false);
+			ProcessChar('x');
+
+			ProcessKey(Keys.Control | Keys.Z);
+			ProcessKey(Keys.Control | Keys.Z);
+
+			ProcessKey(Keys.Control | Keys.Y);
+			ProcessKey(Keys.Control | Keys.Y);
+
+			Assert.AreEqual(Viewer.Text, "1x3");
+		}
 	}
 }

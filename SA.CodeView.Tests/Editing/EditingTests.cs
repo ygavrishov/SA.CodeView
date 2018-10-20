@@ -139,6 +139,18 @@ namespace Tests.Editing
 		}
 		//=========================================================================================
 		[Test]
+		public void Type_enter_on_selection()
+		{
+			this.Viewer.Text = "abc";
+
+			this.Viewer.Caret.MoveDocEnd(true);
+			this.Viewer.Caret.MoveToPos(0, 2, false);
+			this.ProcessKey(Keys.Enter);
+			Assert.AreEqual(this.Viewer.Text, "ab\r\n");
+			this.AssertCaret(1, 0);
+		}
+		//=========================================================================================
+		[Test]
 		public void Delete_selected_text_by_delete_key()
 		{
 			//Delete substring

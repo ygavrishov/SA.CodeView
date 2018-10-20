@@ -120,5 +120,6 @@ namespace SA.CodeView
 			this.BackBrush.Dispose();
 		}
 		//=========================================================================================
+		public override string ToString() => Text;
 	}
 }

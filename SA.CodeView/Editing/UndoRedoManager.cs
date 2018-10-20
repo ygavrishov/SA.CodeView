@@ -82,6 +82,7 @@ namespace SA.CodeView.Editing
 				case UndoRedoOperationType.Insert:
 				case UndoRedoOperationType.CaretReturn:
 					Viewer.Caret.MoveToPos(operation.Line, operation.StartChar, true);
+					Viewer.Caret.MoveToPos(operation.Line, operation.EndChar, false);
 					EditingController.PasteText(operation.Text);
 					StartNewUndoRedoOperation();
 					Operations.Push(operation);
