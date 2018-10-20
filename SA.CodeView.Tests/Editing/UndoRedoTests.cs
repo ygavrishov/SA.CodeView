@@ -276,5 +276,23 @@ abc");
 
 			Assert.AreEqual(Viewer.Text, "1x3");
 		}
+
+		[Test]
+		public void Redo_cut_operation()
+		{
+			Viewer.Text = "";
+			for (char letter = '1'; letter <= '3'; letter++)
+				ProcessChar(letter);
+			Viewer.Caret.MoveDocEnd(true);
+			Viewer.Caret.MoveToPos(0, 2, false);
+
+			ProcessKey(Keys.Control | Keys.X);
+			Assert.AreEqual(Viewer.Text, "12");
+
+			ProcessKey(Keys.Control | Keys.Z);
+
+			ProcessKey(Keys.Control | Keys.Y);
+			Assert.AreEqual(Viewer.Text, "12");
+		}
 	}
 }
