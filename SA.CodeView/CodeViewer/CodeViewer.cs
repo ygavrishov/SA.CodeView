@@ -453,6 +453,17 @@ namespace SA.CodeView
 			this.EditController.CopyToClipboard(true);
 		}
 		//=========================================================================================
+		internal TextPoint GetSelectionBoundary(bool first)
+		{
+			var startPoint = Body.SelectionStart;
+			var caretPos = Caret.Point;
+
+			if (first)
+				return TextPoint.Min(startPoint, caretPos);
+			else
+				return TextPoint.Max(startPoint, caretPos);
+		}
+		//=========================================================================================
 		public event EventHandler SelectionChange;
 		internal void OnChangeSelection()
 		{

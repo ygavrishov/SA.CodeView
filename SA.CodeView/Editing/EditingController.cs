@@ -257,12 +257,12 @@ namespace SA.CodeView.Editing
 				return false;
 
 			string text = ClipboardProxy.GetText();
-			int startLine = Viewer.Caret.Line;
-			int startChar = Viewer.Caret.Char;
+			var startPoint = Viewer.GetSelectionBoundary(true);
+			string previousText = Viewer.SelectionText;
 
 			PasteText(text);
 
-			UndoRedoManager.ProcessPaste(startLine, startChar, text);
+			UndoRedoManager.ProcessPaste(startPoint.Line, startPoint.Col, text, previousText);
 
 			this.InitTokens();
 			this.Viewer.Body.Invalidate(false);

@@ -61,6 +61,8 @@ namespace SA.CodeView.Editing
 				case UndoRedoOperationType.Paste:
 					Viewer.Caret.MoveToPos(operation.Line, operation.StartChar, true);
 					EditingController.DeleteText(operation.Line, operation.StartChar, operation.Line, operation.EndChar);
+					if (!string.IsNullOrEmpty(operation.PreviousText))
+						EditingController.PasteText(operation.PreviousText);
 					break;
 				default:
 					throw new NotSupportedException();
@@ -151,8 +153,9 @@ namespace SA.CodeView.Editing
 			Operations.Push(operation);
 		}
 
-		public void ProcessPaste(int startLine, int startChar, string text)
+		public void ProcessPaste(int startLine, int startChar, string text, string previousText)
 		{
+			SaveCurrentOperationToStack();
 			var operation = new UndoRedoOperation
 			{
 				Type = UndoRedoOperationType.Paste,
@@ -160,7 +163,7 @@ namespace SA.CodeView.Editing
 				StartChar = startChar,
 				Text = text,
 				EndChar = Caret.Char,
-				PreviousText = PreviousText,
+				PreviousText = previousText,
 			};
 			Operations.Push(operation);
 			StartNewUndoRedoOperation();
@@ -170,7 +173,7 @@ namespace SA.CodeView.Editing
 		{
 			SaveCurrentOperationToStack();
 			var operation = TakeCurrentTypingOperation();
-			operation.EndChar = GetSelectionBoundary(false).Char;
+			operation.EndChar = Viewer.GetSelectionBoundary(false).Char;
 			operation.Type = UndoRedoOperationType.Remove;
 			operation.Text = Viewer.SelectionText;
 			Operations.Push(operation);
@@ -220,21 +223,10 @@ namespace SA.CodeView.Editing
 
 		private void StartNewUndoRedoOperation()
 		{
-			TextPoint startPoint = GetSelectionBoundary(true);
+			TextPoint startPoint = Viewer.GetSelectionBoundary(true);
 			CurrentLine = startPoint.Line;
 			CurrentEndChar = CurrentStartChar = startPoint.Char;
 			PreviousText = null;
-		}
-
-		private TextPoint GetSelectionBoundary(bool first)
-		{
-			var startPoint = Viewer.Body.SelectionStart;
-			var caretPos = Caret.Point;
-
-			if (first)
-				return TextPoint.Min(startPoint, caretPos);
-			else
-				return TextPoint.Max(startPoint, caretPos);
 		}
 	}
 }

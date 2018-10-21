@@ -324,5 +324,27 @@ abc");
 			ProcessKey(Keys.Control | Keys.Y);
 			Assert.AreEqual(Viewer.Text, "abcabc");
 		}
+
+		[Test]
+		public void Paste_the_same_text()
+		{
+			Viewer.Text = "";
+			for (char letter = 'a'; letter <= 'c'; letter++)
+				ProcessChar(letter);
+
+			Viewer.Caret.MoveToPos(0, 1, true);
+			Viewer.Caret.MoveDocEnd(false);
+
+			ProcessKey(Keys.Control | Keys.C);
+			ProcessKey(Keys.Control | Keys.V);
+			ProcessKey(Keys.Control | Keys.V);
+			Assert.AreEqual(Viewer.Text, "abcbc");
+
+			ProcessKey(Keys.Control | Keys.Z);
+			ProcessKey(Keys.Control | Keys.Z);
+			ProcessKey(Keys.Control | Keys.Z);
+			ProcessKey(Keys.Control | Keys.Z);
+			Assert.AreEqual(Viewer.Text, "");
+		}
 	}
 }
