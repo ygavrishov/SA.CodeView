@@ -294,5 +294,35 @@ abc");
 			ProcessKey(Keys.Control | Keys.Y);
 			Assert.AreEqual(Viewer.Text, "12");
 		}
+
+		[Test]
+		public void Redo_paste_operation()
+		{
+			Viewer.Text = "";
+			for (char letter = 'a'; letter <= 'c'; letter++)
+				ProcessChar(letter);
+
+			Viewer.SelectAll();
+
+			ProcessKey(Keys.Control | Keys.X);
+			ProcessKey(Keys.Control | Keys.V);
+			ProcessKey(Keys.Control | Keys.V);
+			Assert.AreEqual(Viewer.Text, "abcabc");
+
+			ProcessKey(Keys.Control | Keys.Z);
+			ProcessKey(Keys.Control | Keys.Z);
+			ProcessKey(Keys.Control | Keys.Z);
+			ProcessKey(Keys.Control | Keys.Z);
+			Assert.AreEqual(Viewer.Text, "");
+
+			ProcessKey(Keys.Control | Keys.Y);
+			Assert.AreEqual(Viewer.Text, "abc");
+			ProcessKey(Keys.Control | Keys.Y);
+			Assert.AreEqual(Viewer.Text, "");
+			ProcessKey(Keys.Control | Keys.Y);
+			Assert.AreEqual(Viewer.Text, "abc");
+			ProcessKey(Keys.Control | Keys.Y);
+			Assert.AreEqual(Viewer.Text, "abcabc");
+		}
 	}
 }

@@ -81,6 +81,7 @@ namespace SA.CodeView.Editing
 			{
 				case UndoRedoOperationType.Insert:
 				case UndoRedoOperationType.CaretReturn:
+				case UndoRedoOperationType.Paste:
 					Viewer.Caret.MoveToPos(operation.Line, operation.StartChar, true);
 					Viewer.Caret.MoveToPos(operation.Line, operation.EndChar, false);
 					EditingController.PasteText(operation.Text);
@@ -91,7 +92,6 @@ namespace SA.CodeView.Editing
 					Viewer.Caret.MoveToPos(operation.Line, operation.StartChar, true);
 					EditingController.DeleteText(operation.Line, operation.StartChar, operation.Line, operation.EndChar);
 					break;
-				case UndoRedoOperationType.Paste:
 				default:
 					throw new NotSupportedException();
 			}
@@ -158,7 +158,7 @@ namespace SA.CodeView.Editing
 				Type = UndoRedoOperationType.Paste,
 				Line = startLine,
 				StartChar = startChar,
-				Text = Viewer.Text,
+				Text = text,
 				EndChar = Caret.Char,
 				PreviousText = PreviousText,
 			};
