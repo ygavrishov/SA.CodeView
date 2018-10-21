@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace SA.CodeView.IntelliSense
 {
-	public class IntelliSenseListView : ListView
+	internal class IntelliSenseListView : ListView
 	{
 		#region WinAPI constants
 

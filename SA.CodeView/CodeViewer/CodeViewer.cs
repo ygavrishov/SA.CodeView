@@ -46,7 +46,7 @@ namespace SA.CodeView
 		bool _ShowLineNumbers;
 		bool _ShowMargin;
 		internal List<Token> Tokens { get; private set; }
-		bool _ReadOnly = true;
+		bool _ReadOnly;
 		//=========================================================================================
 		internal Pen PenGrayDot;
 		private System.ComponentModel.IContainer components = null;
@@ -65,17 +65,11 @@ namespace SA.CodeView
 		/// <summary>Controls whether the text in the edit control can be changed or not.</summary>
 		[Category("Behavior")]
 		[Description("Controls whether the text in the edit control can be changed or not.")]
-		[DefaultValue(true)]
+		[DefaultValue(false)]
 		public bool ReadOnly
 		{
 			get { return this._ReadOnly; }
-			set
-			{
-				this._ReadOnly = value;
-				if (!value)
-					if (this.EditController == null)
-						this.EditController = new EditingController(this);
-			}
+			set { this._ReadOnly = value; }
 		}
 		//=========================================================================================
 		SyntaxSettings _SyntaxSettings;
@@ -291,8 +285,8 @@ namespace SA.CodeView
 		//=========================================================================================
 		public CodeViewer()
 		{
-            this.BackColor = SystemColors.Window;
-            this._Language = PredefinedLanguage.None;
+			this.BackColor = SystemColors.Window;
+			this._Language = PredefinedLanguage.None;
 			this.Document = new Document();
 			this.Spans = new TextSpanCollection(this);
 			this.InitializeComponent();
@@ -303,6 +297,7 @@ namespace SA.CodeView
 			this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 			this.SetStyle(ControlStyles.ResizeRedraw, true);
 
+			this.EditController = new EditingController(this);
 			this._Body.SetOwner(this);
 
 			this._Body.KeyDown += new KeyEventHandler(_Body_KeyDown);
@@ -375,12 +370,12 @@ namespace SA.CodeView
 					e.Graphics.DrawLine(oBorderPen, 0, 0, 0, this.Height - 1);
 				if ((this.BorderLines & BorderLine.Top) != 0)
 					e.Graphics.DrawLine(oBorderPen, 0, 0, this.Width - 1, 0);
-				
+
 				if ((this.BorderLines & BorderLine.Right) != 0)
 					e.Graphics.DrawLine(oBorderPen, this.Width - 1, 0, this.Width - 1, this.Height - 1);
-				else if(this.Body.VerticalScroll.Visible)
+				else if (this.Body.VerticalScroll.Visible)
 					e.Graphics.DrawLine(SystemPens.Control, this.Width - 1, 1, this.Width - 1, this.Height - 2);
-				
+
 				if ((this.BorderLines & BorderLine.Bottom) != 0)
 					e.Graphics.DrawLine(oBorderPen, 0, this.Height - 1, this.Width - 1, this.Height - 1);
 				else if (this.Body.HorizontalScroll.Visible)
@@ -540,16 +535,16 @@ namespace SA.CodeView
 			return this.CharHeight;
 		}
 		//=========================================================================================
-        internal int GetTextIndexByTextPoint(TextPoint textPoint)
-        {
-            int iTextIndex = textPoint.Char;
+		internal int GetTextIndexByTextPoint(TextPoint textPoint)
+		{
+			int iTextIndex = textPoint.Char;
 
-            for (int i = 0; i < textPoint.Line; i++)
-                iTextIndex += this.Document[i].Text.Length + "\r\n".Length;
+			for (int i = 0; i < textPoint.Line; i++)
+				iTextIndex += this.Document[i].Text.Length + "\r\n".Length;
 
-            return iTextIndex;
+			return iTextIndex;
 
-        }
+		}
 		//=========================================================================================
 		/// <summary>Specifies what side borders should be displayed</summary>
 		public BorderLine BorderLines = BorderLine.All;
