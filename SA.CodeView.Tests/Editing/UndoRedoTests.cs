@@ -346,5 +346,24 @@ abc");
 			ProcessKey(Keys.Control | Keys.Z);
 			Assert.AreEqual(Viewer.Text, "");
 		}
+
+		[Test]
+		public void Undo_redo_multiline_deletion()
+		{
+			Viewer.Text = "";
+			for (int i = 0; i < 3; i++)
+				ProcessChar('1');
+			ProcessKey(Keys.Enter);
+			for (int i = 0; i < 3; i++)
+				ProcessChar('2');
+
+			Viewer.Caret.MoveToPos(0, 2, true);
+			Viewer.Caret.MoveDocEnd(false);
+			ProcessKey(Keys.Delete);
+
+			ProcessKey(Keys.Control | Keys.Z);
+			ProcessKey(Keys.Control | Keys.Y);
+			Assert.AreEqual(Viewer.Text, "11");
+		}
 	}
 }

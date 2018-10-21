@@ -5,8 +5,9 @@ namespace SA.CodeView.Editing
 {
 	class UndoRedoManager
 	{
-		private int CurrentLine;
+		private int CurrentStartLine;
 		private int CurrentStartChar;
+		private int CurrentEndLine;
 		private int CurrentEndChar;
 		private string PreviousText;
 
@@ -51,16 +52,16 @@ namespace SA.CodeView.Editing
 					UndoTyping(operation);
 					break;
 				case UndoRedoOperationType.CaretReturn:
-					Viewer.Caret.MoveToPos(operation.Line, operation.StartChar, true);
+					Viewer.Caret.MoveToPos(operation.StartLine, operation.StartChar, true);
 					EditingController.ProcessDeleteKey(false);
 					break;
 				case UndoRedoOperationType.Remove:
-					Viewer.Caret.MoveToPos(operation.Line, operation.StartChar, true);
+					Viewer.Caret.MoveToPos(operation.StartLine, operation.StartChar, true);
 					EditingController.PasteText(operation.Text);
 					break;
 				case UndoRedoOperationType.Paste:
-					Viewer.Caret.MoveToPos(operation.Line, operation.StartChar, true);
-					EditingController.DeleteText(operation.Line, operation.StartChar, operation.Line, operation.EndChar);
+					Viewer.Caret.MoveToPos(operation.StartLine, operation.StartChar, true);
+					EditingController.DeleteText(operation.StartLine, operation.StartChar, operation.EndLine, operation.EndChar);
 					if (!string.IsNullOrEmpty(operation.PreviousText))
 						EditingController.PasteText(operation.PreviousText);
 					break;
@@ -84,15 +85,15 @@ namespace SA.CodeView.Editing
 				case UndoRedoOperationType.Insert:
 				case UndoRedoOperationType.CaretReturn:
 				case UndoRedoOperationType.Paste:
-					Viewer.Caret.MoveToPos(operation.Line, operation.StartChar, true);
-					Viewer.Caret.MoveToPos(operation.Line, operation.EndChar, false);
+					Viewer.Caret.MoveToPos(operation.StartLine, operation.StartChar, true);
+					Viewer.Caret.MoveToPos(operation.EndLine, operation.EndChar, false);
 					EditingController.PasteText(operation.Text);
 					StartNewUndoRedoOperation();
 					Operations.Push(operation);
 					break;
 				case UndoRedoOperationType.Remove:
-					Viewer.Caret.MoveToPos(operation.Line, operation.StartChar, true);
-					EditingController.DeleteText(operation.Line, operation.StartChar, operation.Line, operation.EndChar);
+					Viewer.Caret.MoveToPos(operation.StartLine, operation.StartChar, true);
+					EditingController.DeleteText(operation.StartLine, operation.StartChar, operation.EndLine, operation.EndChar);
 					break;
 				default:
 					throw new NotSupportedException();
@@ -104,7 +105,7 @@ namespace SA.CodeView.Editing
 			string selectionText = Viewer.SelectionText;
 
 			if (selectionText.Length > 0 ||
-				Caret.Line != CurrentLine || Caret.Char != CurrentEndChar)
+				Caret.Line != CurrentEndLine || Caret.Char != CurrentEndChar)
 			{
 				var operation = SaveCurrentOperationToStack();
 				PreviousText = selectionText;
@@ -118,8 +119,9 @@ namespace SA.CodeView.Editing
 			var operation = new UndoRedoOperation
 			{
 				Type = UndoRedoOperationType.CaretReturn,
-				Line = Viewer.Caret.Line,
+				StartLine = Viewer.Caret.Line,
 				StartChar = Viewer.Caret.Char,
+				EndLine = Viewer.Caret.Line,
 				EndChar = Viewer.Caret.Char,
 				Text = "\r\n"
 			};
@@ -129,12 +131,16 @@ namespace SA.CodeView.Editing
 		public void ProcessDeletion(bool backward)
 		{
 			SaveCurrentOperationToStack();
+
+			var start = Viewer.GetSelectionBoundary(true);
+			var end = Viewer.GetSelectionBoundary(false);
 			var operation = new UndoRedoOperation
 			{
 				Type = UndoRedoOperationType.Remove,
-				Line = Viewer.Caret.Line,
-				StartChar = Viewer.Caret.Char,
-				EndChar = Viewer.Caret.Char,
+				StartLine = start.Line,
+				StartChar = start.Char,
+				EndLine = end.Line,
+				EndChar = end.Char,
 			};
 			if (!Viewer.SelectionExists)
 			{
@@ -159,9 +165,10 @@ namespace SA.CodeView.Editing
 			var operation = new UndoRedoOperation
 			{
 				Type = UndoRedoOperationType.Paste,
-				Line = startLine,
+				StartLine = startLine,
 				StartChar = startChar,
 				Text = text,
+				EndLine = Caret.Line,
 				EndChar = Caret.Char,
 				PreviousText = previousText,
 			};
@@ -182,7 +189,7 @@ namespace SA.CodeView.Editing
 		private UndoRedoOperation SaveCurrentOperationToStack(bool cleanUndoneOperations = true)
 		{
 			UndoRedoOperation operation;
-			if (CurrentStartChar != CurrentEndChar)
+			if (CurrentStartChar != CurrentEndChar || CurrentStartLine != CurrentEndLine)
 			{
 				operation = TakeCurrentTypingOperation();
 				Operations.Push(operation);
@@ -199,8 +206,8 @@ namespace SA.CodeView.Editing
 
 		private void UndoTyping(UndoRedoOperation operation)
 		{
-			Doc[operation.Line].Text = Doc[operation.Line].Text.Remove(operation.StartChar, operation.Length);
-			this.Viewer.Caret.MoveToPos(operation.Line, operation.StartChar, true);
+			Doc[operation.StartLine].Text = Doc[operation.StartLine].Text.Remove(operation.StartChar, operation.EndChar - operation.StartChar);
+			this.Viewer.Caret.MoveToPos(operation.StartLine, operation.StartChar, true);
 			if (!string.IsNullOrEmpty(operation.PreviousText))
 				EditingController.PasteText(operation.PreviousText);
 		}
@@ -208,11 +215,12 @@ namespace SA.CodeView.Editing
 		private UndoRedoOperation TakeCurrentTypingOperation()
 		{
 			UndoRedoOperation operation;
-			string text = Doc[CurrentLine].Text.Substring(CurrentStartChar, CurrentEndChar - CurrentStartChar);
+			string text = Doc.GetText(CurrentStartLine, CurrentStartChar, CurrentEndLine, CurrentEndChar);
 			operation = new UndoRedoOperation
 			{
-				Line = CurrentLine,
+				StartLine = CurrentStartLine,
 				StartChar = CurrentStartChar,
+				EndLine = CurrentEndLine,
 				EndChar = CurrentEndChar,
 				Text = text,
 				Type = UndoRedoOperationType.Insert,
@@ -224,8 +232,9 @@ namespace SA.CodeView.Editing
 		private void StartNewUndoRedoOperation()
 		{
 			TextPoint startPoint = Viewer.GetSelectionBoundary(true);
-			CurrentLine = startPoint.Line;
+			CurrentEndLine = CurrentStartLine = startPoint.Line;
 			CurrentEndChar = CurrentStartChar = startPoint.Char;
+
 			PreviousText = null;
 		}
 	}

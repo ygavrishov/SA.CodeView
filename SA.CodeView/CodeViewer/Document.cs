@@ -85,10 +85,17 @@ namespace SA.CodeView
 				for (int i = start.Line + 1; i < end.Line; i++)
 					sb.AppendLine(this.Lines[i].Text);
 
-				sb.AppendLine(this.Lines[end.Line].Text.Substring(0, end.Char));
+				sb.Append(this.Lines[end.Line].Text.Substring(0, end.Char));
 
 				return sb.ToString();
 			}
+		}
+		//=========================================================================================
+		internal string GetText(int startLine, int startChar, int endLine, int endChar)
+		{
+			var start = new TextPoint { Line = startLine, Char = startChar };
+			var end = new TextPoint { Line = endLine, Char = endChar };
+			return GetText(start, end);
 		}
 		//=========================================================================================
 	}
