@@ -94,6 +94,7 @@ namespace SA.CodeView.Editing
 				case UndoRedoOperationType.Remove:
 					Viewer.Caret.MoveToPos(operation.StartLine, operation.StartChar, true);
 					EditingController.DeleteText(operation.StartLine, operation.StartChar, operation.EndLine, operation.EndChar);
+					Operations.Push(operation);
 					break;
 				default:
 					throw new NotSupportedException();

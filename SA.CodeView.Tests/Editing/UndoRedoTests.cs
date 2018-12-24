@@ -365,5 +365,25 @@ abc");
 			ProcessKey(Keys.Control | Keys.Y);
 			Assert.AreEqual(Viewer.Text, "11");
 		}
+
+		[Test]
+		public void Undo_redo_multiline_deletion_2()
+		{
+			Viewer.Text = "";
+			for (int j = 0; j < 4; j++)
+			{
+				for (int i = 0; i < 2; i++)
+					ProcessChar('a');
+				ProcessKey(Keys.Enter);
+			}
+			Viewer.Caret.MoveToPos(2, 2, true);
+			Viewer.Caret.MoveToPos(1, 0, false);
+			ProcessKey(Keys.Delete);
+
+			ProcessKey(Keys.Control | Keys.Z);
+			ProcessKey(Keys.Control | Keys.Y);
+			ProcessKey(Keys.Control | Keys.Z);
+			Assert.AreEqual(Viewer.Text, "aa\r\naa\r\naa\r\naa\r\n");
+		}
 	}
 }
