@@ -4,27 +4,6 @@ using SA.CodeView.Utils;
 
 namespace SA.CodeView.Editing
 {
-	/// <summary>Allow access to clipboard.</summary>
-	public class ClipboardProxyClass
-	{
-		public static readonly ClipboardProxyClass Self = new ClipboardProxyClass();
-		//=========================================================================================
-		public virtual bool ContainsText()
-		{
-			return Clipboard.ContainsText();
-		}
-		//=========================================================================================
-		public virtual string GetText()
-		{
-			return Clipboard.GetText();
-		}
-		//=========================================================================================
-		public virtual void SetText(string text)
-		{
-			Clipboard.SetText(text);
-		}
-		//=========================================================================================
-	}
 	/// <summary>Modifies text document by keyboard events processing.</summary>
 	class EditingController
 	{
@@ -36,15 +15,17 @@ namespace SA.CodeView.Editing
 
 		/// <summary>Last keyboard event args</summary>
 		private KeyEventArgs KeyDownEventArgs;
-		internal ClipboardProxyClass ClipboardProxy;
+		internal IClipboard ClipboardProxy;
 
 		readonly CodeViewer Viewer;
 		readonly Document Doc;
+		private readonly UndoRedoManager UndoRedoManager;
 		//=========================================================================================
 		public EditingController(CodeViewer viewer)
 		{
 			this.Viewer = viewer;
 			this.Doc = viewer.Document;
+			UndoRedoManager = new UndoRedoManager(viewer, this);
 		}
 		//=========================================================================================
 		private void InitTokens()
@@ -71,9 +52,12 @@ namespace SA.CodeView.Editing
 				if (category == System.Globalization.UnicodeCategory.Control)
 					return false;
 			}
+			UndoRedoManager.ProcessChar();
+
 			this.InitFields();
 			this.DeleteSelection();
 			this.InitFields();
+
 			this.Doc[CurPos.Line].Text = this.CurLine.Insert(CurPos.Char, c.ToString());
 			this.Viewer.Caret.MoveRight(true);
 			this.InitTokens();
@@ -89,16 +73,31 @@ namespace SA.CodeView.Editing
 			{
 				case Keys.V:
 					if (e.Control)
-						return this.PasteFromClipboard();
+						return PasteFromClipboard();
 					break;
 				case Keys.C:
-				case Keys.X:
 					if (e.Control)
-						if (!this.CopyToClipboard(e.KeyCode == Keys.X))
+						if (!this.CopyToClipboard(false))
 							return false;
 					break;
+				case Keys.X:
+					if (e.Control)
+					{
+						UndoRedoManager.ProcessCut();
+						if (!this.CopyToClipboard(true))
+							return false;
+					}
+					break;
+				case Keys.Z:
+					if (e.Control)
+						UndoRedoManager.Undo();
+					break;
+				case Keys.Y:
+					if (e.Control)
+						UndoRedoManager.Redo();
+					break;
 				case Keys.Delete:
-					this.ProcessDeleteKey();
+					this.ProcessDeleteKey(true);
 					break;
 				case Keys.Back:
 					this.ProcessBackspaceKey();
@@ -117,6 +116,10 @@ namespace SA.CodeView.Editing
 		//=========================================================================================
 		private void ProcessEnterKey()
 		{
+			UndoRedoManager.ProcessEnterKey();
+
+			DeleteSelection();
+			InitFields();
 			int iCurPosChar = this.CurPos.Char;
 			if (iCurPosChar < this.CurLine.Length)
 				this.Doc[CurPos.Line].Text = this.CurLine.Remove(iCurPosChar);
@@ -126,6 +129,8 @@ namespace SA.CodeView.Editing
 		//=========================================================================================
 		private void ProcessBackspaceKey()
 		{
+			UndoRedoManager.ProcessDeletion(true);
+
 			if (!this.HasSelection())
 			{
 				if (this.KeyDownEventArgs.Control)
@@ -136,16 +141,19 @@ namespace SA.CodeView.Editing
 			}
 			else
 				if (this.KeyDownEventArgs.Control)
-				{
-					this.Viewer.Caret.MoveWordLeft(false);
-					this.InitFields();
-				}
+			{
+				this.Viewer.Caret.MoveWordLeft(false);
+				this.InitFields();
+			}
 
 			this.DeleteSelection();
 		}
 		//=========================================================================================
-		private void ProcessDeleteKey()
+		internal void ProcessDeleteKey(bool saveUndoOperation)
 		{
+			if (saveUndoOperation)
+				UndoRedoManager.ProcessDeletion(false);
+
 			if (!this.HasSelection())
 			{
 				if (this.KeyDownEventArgs.Control)
@@ -161,10 +169,10 @@ namespace SA.CodeView.Editing
 			}
 			else
 				if (this.KeyDownEventArgs.Control)
-				{
-					this.Viewer.Caret.MoveWordRight(false);
-					this.InitFields();
-				}
+			{
+				this.Viewer.Caret.MoveWordRight(false);
+				this.InitFields();
+			}
 
 			this.DeleteSelection();
 		}
@@ -205,25 +213,36 @@ namespace SA.CodeView.Editing
 				pStart = this.SelectionStart;
 				pEnd = this.CurPos;
 			}
-			if (pStart.Line == pEnd.Line)
+			DeleteText(pStart, pEnd);
+			this.Viewer.Caret.MoveToPos(pStart.Line, pStart.Col, true);
+		}
+
+		internal void DeleteText(TextPoint startPos, TextPoint endPos)
+		{
+			DeleteText(startPos.Line, startPos.Char, endPos.Line, endPos.Char);
+		}
+
+		internal void DeleteText(int startLine, int startChar, int endLine, int endChar)
+		{
+			if (startLine == endLine)
 			{
-				string sLine = this.Doc[pStart.Line].Text;
-				this.Doc[pStart.Line].Text = sLine.Remove(pStart.Char, pEnd.Char - pStart.Char);
+				string sLine = this.Doc[startLine].Text;
+				this.Doc[startLine].Text = sLine.Remove(startChar, endChar - startChar);
 			}
 			else
 			{
 				//Find last line ending
-				string sEndLine = this.Doc[pEnd.Line].Text.Substring(pEnd.Char);
+				string sEndLine = this.Doc[endLine].Text.Substring(endChar);
 				//Delete unnecessary lines
-				this.Doc.RemoveRange(pStart.Line + 1, pEnd.Line - pStart.Line);
+				this.Doc.RemoveRange(startLine + 1, endLine - startLine);
 				//Create result text
-				string sStartLine = this.Doc[pStart.Line].Text;
-				if (pStart.Char < sStartLine.Length)
-					sStartLine = sStartLine.Remove(pStart.Char);
-				this.Doc[pStart.Line].Text = sStartLine + sEndLine;
+				string sStartLine = this.Doc[startLine].Text;
+				if (startChar < sStartLine.Length)
+					sStartLine = sStartLine.Remove(startChar);
+				this.Doc[startLine].Text = sStartLine + sEndLine;
 			}
-			this.Viewer.Caret.MoveToPos(pStart.Line, pStart.Col, true);
 		}
+
 		//=========================================================================================
 		bool HasSelection()
 		{
@@ -237,13 +256,20 @@ namespace SA.CodeView.Editing
 			if (!this.ClipboardProxy.ContainsText())
 				return false;
 
-			this.PasteText(this.ClipboardProxy.GetText());
+			string text = ClipboardProxy.GetText();
+			var startPoint = Viewer.GetSelectionBoundary(true);
+			string previousText = Viewer.SelectionText;
+
+			PasteText(text);
+
+			UndoRedoManager.ProcessPaste(startPoint.Line, startPoint.Col, text, previousText);
+
 			this.InitTokens();
 			this.Viewer.Body.Invalidate(false);
 			return true;
 		}
 		//=========================================================================================
-		void PasteText(string text)
+		internal void PasteText(string text)
 		{
 			this.InitFields();
 			if (this.HasSelection())

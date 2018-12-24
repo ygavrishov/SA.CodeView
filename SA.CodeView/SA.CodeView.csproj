@@ -158,6 +158,9 @@
     <Compile Include="CodeViewer\Document.cs" />
     <Compile Include="CodeViewer\SmallTypes.cs" />
     <Compile Include="CodeViewer\DocumentViewRenderer.cs" />
+    <Compile Include="Editing\ClipboardProxyClass.cs" />
+    <Compile Include="Editing\UndoRedoManager.cs" />
+    <Compile Include="Editing\UndoRedoOperation.cs" />
     <Compile Include="IntelliSense\CompletionVariant.cs" />
     <Compile Include="IntelliSense\EditQueryRegExBuilder.cs" />
     <Compile Include="IntelliSense\WhereSuggestionBuilder.cs" />

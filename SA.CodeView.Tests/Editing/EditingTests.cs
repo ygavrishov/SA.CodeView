@@ -4,7 +4,7 @@ using NUnit.Framework;
 using SA.CodeView;
 using SA.CodeView.Editing;
 
-namespace Tests.CodeViewing
+namespace Tests.Editing
 {
 	/// <summary>Test editing features.</summary>
 	[TestFixture]
@@ -12,7 +12,7 @@ namespace Tests.CodeViewing
 	{
 		CodeViewer Viewer;
 		EditingController EditController;
-		Mock<ClipboardProxyClass> ClipboardProxy;
+		Mock<IClipboard> ClipboardProxy;
 		//=========================================================================================
 		#region Service functions
 		[SetUp]
@@ -21,7 +21,7 @@ namespace Tests.CodeViewing
 			this.Viewer = new CodeViewer();
 			this.Viewer.Language = PredefinedLanguage.MsSql;
 			this.EditController = new EditingController(Viewer);
-			this.ClipboardProxy = new Mock<ClipboardProxyClass>();
+			this.ClipboardProxy = new Mock<IClipboard>();
 			this.EditController.ClipboardProxy = this.ClipboardProxy.Object;
 		}
 		//=========================================================================================
@@ -61,7 +61,7 @@ namespace Tests.CodeViewing
 		/// <summary>Mock text in clipboard.</summary>
 		void SetTextToClipboard(string text)
 		{
-			ClipboardProxy = new Mock<ClipboardProxyClass>();
+			ClipboardProxy = new Mock<IClipboard>();
 			ClipboardProxy.Setup(x => x.ContainsText()).Returns(true);
 			ClipboardProxy.Setup(x => x.GetText()).Returns(text);
 			this.EditController.ClipboardProxy = this.ClipboardProxy.Object;
@@ -135,6 +135,18 @@ namespace Tests.CodeViewing
 			this.Viewer.Caret.MoveToPos(0, 1, true);
 			this.ProcessKey(Keys.Enter);
 			Assert.AreEqual(this.Viewer.Text, "a\r\nbc");
+			this.AssertCaret(1, 0);
+		}
+		//=========================================================================================
+		[Test]
+		public void Type_enter_on_selection()
+		{
+			this.Viewer.Text = "abc";
+
+			this.Viewer.Caret.MoveDocEnd(true);
+			this.Viewer.Caret.MoveToPos(0, 2, false);
+			this.ProcessKey(Keys.Enter);
+			Assert.AreEqual(this.Viewer.Text, "ab\r\n");
 			this.AssertCaret(1, 0);
 		}
 		//=========================================================================================
