@@ -1,5 +1,5 @@
 # SA.CodeView
-WinForms code editor with syntax highlighting
+C# WinForms code editor with syntax highlighting
 
 SA.CodeView is light-weight viewer and editor with syntax highlighting. It can be used as single-line text field or as fully functioned editor. It was initially developed for some application but then was segregated as standalone open-source library.
 
